@@ -6,7 +6,7 @@ This is a heavily modified fork of https://github.com/junwei-wang/cpabe.
 
 
 #### Dependencies
-Download the source of JPBC from http://sourceforge.net/p/jpbc/code/HEAD/tree/tags/2_0_0/
+Download the source of JPBC from [here](http://sourceforge.net/p/jpbc/code/) (JCPABE has only been tested with version 2.0.0).
 Install it into your local maven repository using
 ```sh
 $ mvn install
