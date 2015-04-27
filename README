@@ -1,0 +1,13 @@
+1. Download the source of JPBC from http://sourceforge.net/p/jpbc/code/HEAD/tree/tags/2_0_0/
+Install it into your local maven repository using:
+> mvn install
+
+2. Download the JavaCC binary (6.1.2 works) from https://java.net/projects/javacc/downloads/directory/releases
+and place the javacc.jar into <repo>/javacc/bin/lib/ 
+(Alternatively change line 6 of the build.xml file to point towards JavaCC.)
+
+3. Go to the jcpabe/ folder and do either
+> mvn install
+to install JCPABE to your local maven repository or do
+> mvn package
+to generate the jcpabe-1.0.0.jar file.
