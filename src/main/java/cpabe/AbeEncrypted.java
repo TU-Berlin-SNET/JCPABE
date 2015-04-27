@@ -13,7 +13,7 @@ import cpabe.aes.AesEncryption;
 import cpabe.bsw07.Bsw07;
 import cpabe.bsw07.Bsw07Cipher;
 
-public class AbeEncrypted {
+public class AbeEncrypted implements AutoCloseable {
 	Bsw07Cipher cipher;
 	byte[] iv;
 	InputStream dataStream; // the encrypted data
@@ -81,5 +81,9 @@ public class AbeEncrypted {
 	public static AbeEncrypted createDuringEncryption(byte[] iv, byte[] lbeKey, Bsw07Cipher cipher, InputStream input, Element plainSecret) throws AbeEncryptionException, IOException {
 		return new AbeEncrypted(iv, cipher, AesEncryption.encrypt(plainSecret.toBytes(), lbeKey, iv, input));
 	}
-	
+
+	@Override
+	public void close() throws Exception {
+		dataStream.close();
+	}
 }
