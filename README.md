@@ -25,4 +25,5 @@ You can then build the parser by running ant.
 
 jpbc-pbc library can not be found/loaded
 
-JNA build error
+Build error when trying to build jpbc-pbc:
+Remove the system JNA library or patch JPBC (todo add link to patch)
