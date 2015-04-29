@@ -1,12 +1,7 @@
 package cpabe.policy;
 
 import java.math.BigInteger;
-import java.util.List;
 
-import ch.hsr.geohash.BoundingBox;
-import ch.hsr.geohash.GeoHash;
-import ch.hsr.geohash.WGS84Point;
-import cpabe.AbeSettings;
 import cpabe.policyparser.*;
 
 public class PolicyParsing {
@@ -45,13 +40,6 @@ public class PolicyParsing {
             handleAttribute((ASTAttribute) current, retVal);
         } else if (current instanceof ASTNumericalAttribute) {
             handleNumericalAttribute((ASTNumericalAttribute) current, retVal);
-        } else if (current instanceof ASTGeoHashAttribute) {
-        	ASTGeoHashAttribute currentChild = (ASTGeoHashAttribute) current;
-        	if (currentChild.useAdjacentHashes()) {
-        		handleGeoHashAttributeWithNeighbours(currentChild, retVal);
-        	} else {
-        		handleGeoHashAttribute(currentChild, retVal);
-        	}
         } else if (current instanceof ASTAreaAttribute) {
         	handleAreaAttribute((ASTAreaAttribute) current, retVal);
         } else if (!(current instanceof ASTStart)) {
@@ -62,99 +50,29 @@ public class PolicyParsing {
     }
 
 	private static void handleAreaAttribute(ASTAreaAttribute current, StringBuffer retVal) throws ParseException {
-		WGS84Point corner1 = new WGS84Point(current.getLatitude1(), current.getLongitude1());
-		WGS84Point corner2 = new WGS84Point(current.getLatitude2(), current.getLongitude2());
-		BoundingBox box = new BoundingBox(corner1, corner2);
-		String attributeName = current.getName();
-		double minLat = box.getMinLat();
-		double maxLat = box.getMaxLat();
-		double minLng = box.getMinLon();
-		double maxLng = box.getMaxLon();
+        String attributeName = current.getName();
+        double minLat = Math.min(current.getLatitude1(), current.getLatitude2());
+        double maxLat = Math.max(current.getLatitude1(), current.getLatitude2());
+        double minLng = Math.min(current.getLongitude1(), current.getLongitude2());
+        double maxLng = Math.max(current.getLongitude1(), current.getLongitude2());
 
-		BigInteger minLngConverted = Util.convertLongitudeToLong(minLng);
-		BigInteger maxLngConverted = Util.convertLongitudeToLong(maxLng);
-		BigInteger minLatConverted = Util.convertLatitudeToLong(minLat);
-		BigInteger maxLatConverted = Util.convertLatitudeToLong(maxLat);
-		
-		handleNumericalAttribute(attributeName + "_lng", IS_GREATER, minLngConverted.subtract(BigInteger.ONE), retVal);
-		retVal.append(' ');
-		handleNumericalAttribute(attributeName + "_lng", IS_SMALLER, maxLngConverted.add(BigInteger.ONE), retVal);
-		retVal.append(' ');
-		handleNumericalAttribute(attributeName + "_lat", IS_GREATER, minLatConverted.subtract(BigInteger.ONE), retVal);
-		retVal.append(' ');
-		handleNumericalAttribute(attributeName + "_lat", IS_SMALLER, maxLatConverted.add(BigInteger.ONE), retVal);
-		retVal.append(' ');
-		retVal.append("4of4");
-		
-		// a location is always <name>_lng = number and <name>_lat = number
-		// resulting policy shoud be: <name>_lng >= minLng && <name>_lng <= maxLng && <name>_lat >= minLat && <name>_lat <= maxLat
-	}
+        BigInteger minLngConverted = Util.convertLongitudeToLong(minLng);
+        BigInteger maxLngConverted = Util.convertLongitudeToLong(maxLng);
+        BigInteger minLatConverted = Util.convertLatitudeToLong(minLat);
+        BigInteger maxLatConverted = Util.convertLatitudeToLong(maxLat);
 
-	private static void handleGeoHashAttribute(ASTGeoHashAttribute current, StringBuffer retVal) throws ParseException {
-        if (current.getPrecision() > Util.GEOHASH_MAXBITS || current.getPrecision() <= 0) {
-            throw new ParseException("(GeoHash precision) Only values between 1 and " + Util.GEOHASH_MAXBITS + " are supported.");
-        }
-        GeoHash target;
-        try {
-            target = GeoHash.withBitPrecision(current.getLatitude(), current.getLongitude(), current.getPrecision());
-        } catch (IllegalArgumentException e) {
-            throw new ParseException(e.getMessage());
-        }
-        handleGeoHash(target, retVal, current.getName());
+        handleNumericalAttribute(attributeName + "_lng", IS_GREATER, minLngConverted.subtract(BigInteger.ONE), retVal);
+        retVal.append(' ');
+        handleNumericalAttribute(attributeName + "_lng", IS_SMALLER, maxLngConverted.add(BigInteger.ONE), retVal);
+        retVal.append(' ');
+        handleNumericalAttribute(attributeName + "_lat", IS_GREATER, minLatConverted.subtract(BigInteger.ONE), retVal);
+        retVal.append(' ');
+        handleNumericalAttribute(attributeName + "_lat", IS_SMALLER, maxLatConverted.add(BigInteger.ONE), retVal);
+        retVal.append(' ');
+        retVal.append("4of4");
 
-        if (AbeSettings.DEBUG) {
-            System.out.printf("%f,%f%n", current.getLatitude(), current.getLongitude()); // location that was initially entered
-            printBoundingBox(target.getBoundingBox());
-        }
-    }
-
-    private static void handleGeoHashAttributeWithNeighbours(ASTGeoHashAttribute current, StringBuffer retVal) throws ParseException {
-        if (current.getPrecision() > Util.GEOHASH_MAXBITS || current.getPrecision() <= 0) {
-            throw new ParseException("(GeoHash precision) Only values between 1 and " + Util.GEOHASH_MAXBITS + " are supported.");
-        }
-        GeoHash target;
-        try {
-            target = GeoHash.withBitPrecision(current.getLatitude(), current.getLongitude(), current.getPrecision());
-        } catch (IllegalArgumentException e) {
-            throw new ParseException(e.getMessage());
-        }
-
-        GeoHash[] adjacentFields = target.getAdjacent();
-
-        for (GeoHash cur : adjacentFields) {
-            handleGeoHash(cur, retVal, current.getName());
-        }
-        handleGeoHash(target, retVal, current.getName());
-        retVal.append("1of9");
-
-        if (AbeSettings.DEBUG) {
-            System.out.printf("%f,%f%n", current.getLatitude(), current.getLongitude()); // location that was initially entered
-            printBoundingBox(target.getBoundingBox());
-            for (GeoHash cur : adjacentFields) {
-                printBoundingBox(cur.getBoundingBox());
-            }
-        }
-    }
-
-    private static void printBoundingBox(BoundingBox box) {
-        double latError = box.getLatitudeSize() / 2;
-        double lonError = box.getLongitudeSize() / 2;
-
-        double lat = box.getCenterPoint().getLatitude();
-        double lon = box.getCenterPoint().getLongitude();
-        System.out.printf("%f,%f%n", lat + latError, lon - lonError); // top left
-        System.out.printf("%f,%f%n", lat - latError, lon - lonError); // bottom left
-        System.out.printf("%f,%f%n", lat - latError, lon + lonError); // bottom right
-        System.out.printf("%f,%f%n", lat + latError, lon + lonError); // top right
-    }
-
-    private static void handleGeoHash(GeoHash hash, StringBuffer retVal, String attributeName) {
-        int precision = hash.significantBits();
-        List<String> attributes = AttributeParser.geohashToAttributes(attributeName, hash, precision);
-        for (String attribute : attributes) {
-            retVal.append(attribute).append(' ');
-        }
-        retVal.append(precision).append("of").append(precision).append(' ');
+        // a location is always <name>_lng = number and <name>_lat = number
+        // resulting policy shoud be: <name>_lng >= minLng && <name>_lng <= maxLng && <name>_lat >= minLat && <name>_lat <= maxLat
     }
 
     private static void handleAttribute(ASTAttribute current, StringBuffer retVal) throws ParseException {

@@ -4,10 +4,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-
-import ch.hsr.geohash.*;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -62,34 +59,6 @@ public class AttributeParser {
         result.append(getNumericalAttributeResult(attributeName + "_lng", convertedLongitude.toString()));
         return result;
     }
-    
-    private static StringBuffer geohashLocationToAttributes(String attributeName, String latString, String lonString) throws ParseException {
-    	double lat;
-    	double lon;
-        try {
-        	lat = numberFormat.parse(latString).doubleValue();
-        	lon = numberFormat.parse(lonString).doubleValue();
-        } catch (java.text.ParseException e) {
-        	throw new ParseException("Could not parse double: "+ e.getMessage());
-        }
-        GeoHash hash = GeoHash.withBitPrecision(lat, lon, Util.GEOHASH_MAXBITS);
-        List<String> attributes = geohashToAttributes(attributeName, hash, Util.GEOHASH_MAXBITS);
-
-        StringBuffer result = new StringBuffer();
-        for (String s : attributes) {
-            result.append(s).append(' ');
-        }
-        return result;
-    }
-
-    public static List<String> geohashToAttributes(String attributeName, GeoHash hash, int precision) {
-        ArrayList<String> attributes = new ArrayList<String>(precision);
-        String binaryString = hash.toBinaryString();
-        for (int i = 0; i < binaryString.length(); i++) {
-            attributes.add(Util.bit_marker_geohash(attributeName, Util.GEOHASH_MAXBITS - i - 1, binaryString.charAt(i) == '1'));
-        }
-        return attributes;
-    }
 
     private final static String name = "([a-zA-Z]\\w*)";
     private final static String numberInt = "(\\d+)";
@@ -97,7 +66,6 @@ public class AttributeParser {
     private final static Pattern NumericalAttributePattern = Pattern.compile(name + "\\s*=\\s*" + numberInt);
     // <name>:<lat>:<lon>
     private final static String numberDouble = "(\\d+[\\.]\\d*)"; // needs .
-    private final static Pattern GeohashAttributePattern        = Pattern.compile(name + ":" + numberDouble + ":" + numberDouble);
     // <name>~<lat>~<lon>
     private final static Pattern AreaAttributePattern = Pattern.compile(name + "~" + numberDouble + "~" + numberDouble);
     public static String parseAttributes(String attributes) throws ParseException {
@@ -110,15 +78,8 @@ public class AttributeParser {
         }
         matched.appendTail(afterNumericalAttribute);
 
-        // Geohash
-        matched = GeohashAttributePattern.matcher(afterNumericalAttribute);
-        StringBuffer afterGeohashAttribute = new StringBuffer();
-        while (matched.find()) {
-            matched.appendReplacement(afterGeohashAttribute, geohashLocationToAttributes(matched.group(1), matched.group(2), matched.group(3)).toString());
-        }
-        matched.appendTail(afterGeohashAttribute);
-        
-        matched = AreaAttributePattern.matcher(afterGeohashAttribute);
+        // Areattribute
+        matched = AreaAttributePattern.matcher(afterNumericalAttribute);
         StringBuffer finalResult = new StringBuffer();
         while (matched.find()) {
             matched.appendReplacement(finalResult, areaLocationToAttributes(matched.group(1), matched.group(2), matched.group(3)).toString());

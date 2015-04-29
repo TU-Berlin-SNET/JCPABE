@@ -10,7 +10,6 @@ public interface ParseTreeTreeConstants
   public int JJTATTRIBUTE = 4;
   public int JJTNUMERICALATTRIBUTE = 5;
   public int JJTAREAATTRIBUTE = 6;
-  public int JJTGEOHASHATTRIBUTE = 7;
 
 
   public String[] jjtNodeName = {
@@ -21,7 +20,6 @@ public interface ParseTreeTreeConstants
     "Attribute",
     "NumericalAttribute",
     "AreaAttribute",
-    "GeoHashAttribute",
   };
 }
-/* JavaCC - OriginalChecksum=eefaedac0ba944dbf0c880750b29b3b8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1e8a9bfc9fdd6456037476131099e728 (do not edit this line) */

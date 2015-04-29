@@ -39,8 +39,6 @@ private int jjMoveStringLiteralDfa0_0(){
          return jjStopAtPos(0, 24);
       case 44:
          return jjStopAtPos(0, 9);
-      case 58:
-         return jjStopAtPos(0, 26);
       case 59:
          return jjStopAtPos(0, 22);
       case 126:
@@ -292,8 +290,7 @@ static final int[] jjnextStates = {
 /** Token literal values. */
 public static final String[] jjstrLiteralImages = {
 "", null, null, null, null, null, null, null, null, "\54", null, null, null, 
-null, null, null, null, null, null, null, null, null, "\73", "\50", "\51", "\176", 
-"\72", };
+null, null, null, null, null, null, null, null, null, "\73", "\50", "\51", "\176", };
 protected Token jjFillToken()
 {
    final Token t;
@@ -473,7 +470,7 @@ public static final String[] lexStateNames = {
    "DEFAULT",
 };
 static final long[] jjtoToken = {
-   0x7c707c1L, 
+   0x3c707c1L, 
 };
 static final long[] jjtoSkip = {
    0x3eL, 

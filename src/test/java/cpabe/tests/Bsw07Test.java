@@ -253,55 +253,6 @@ public class Bsw07Test {
         assertTrue(Arrays.equals(data, decrypt(equalKey, smallerEqEncryptedTest3)));
         assertTrue(Arrays.equals(data, decrypt(equalKey, equalEncryptedTest3)));
     }
-
-    @Test
-    public void coordinateTest() throws Exception {
-        AbeSecretMasterKey smKey = Cpabe.setup();
-        AbePublicKey pubKey = smKey.getPublicKey();
-        byte[] data = getRandomData();
-
-        double latitudeBerlin = 52.51217;
-        double longitudeBerlin = 13.42106;
-
-        double latitudeHamburg = 53.55108;
-        double longitudeHamburg = 9.99368;
-
-        double latitudeSchwerin = 53.63550;
-        double longitudeSchwerin = 11.40125;
-
-        String policyBerlin = String.format("a:%f:%f:22:1", latitudeBerlin, longitudeBerlin);
-        String policyHamburg = String.format("a:%f:%f:24:1", latitudeHamburg, longitudeHamburg);
-
-        AbeEncrypted berlinEncryptedTest1 = Cpabe.encrypt(pubKey, policyBerlin, data);
-        AbeEncrypted hamburgEncryptedTest1 = Cpabe.encrypt(pubKey, policyHamburg, data);
-        
-        AbeEncrypted berlinEncryptedTest2 = Cpabe.encrypt(pubKey, policyBerlin, data);
-        AbeEncrypted hamburgEncryptedTest2 = Cpabe.encrypt(pubKey, policyHamburg, data);
-        
-        AbeEncrypted berlinEncryptedTest3 = Cpabe.encrypt(pubKey, policyBerlin, data);
-        AbeEncrypted hamburgEncryptedTest3 = Cpabe.encrypt(pubKey, policyHamburg, data);
-
-        String berlinAttribute = String.format("a:%f:%f", latitudeBerlin, longitudeBerlin);
-        String hamburgAttribute = String.format("a:%f:%f", latitudeHamburg, longitudeHamburg);
-        String schwerinAttribute = String.format("a:%f:%f", latitudeSchwerin, longitudeSchwerin);
-
-        AbePrivateKey berlinKey = Cpabe.keygen(smKey, berlinAttribute);
-        AbePrivateKey hamburgKey = Cpabe.keygen(smKey, hamburgAttribute);
-        AbePrivateKey schwerinKey = Cpabe.keygen(smKey, schwerinAttribute);
-
-        // berlinKey
-        assertTrue(Arrays.equals(data, decrypt(berlinKey, berlinEncryptedTest1)));
-        assertFalse(Arrays.equals(data, decrypt(berlinKey, hamburgEncryptedTest1)));
-
-        // hamburgKey
-        assertFalse(Arrays.equals(data, decrypt(hamburgKey, berlinEncryptedTest2)));
-        assertTrue(Arrays.equals(data, decrypt(hamburgKey, hamburgEncryptedTest2)));
-        
-
-        // schwerinKey
-        assertFalse(Arrays.equals(data, decrypt(schwerinKey, berlinEncryptedTest3)));
-        assertFalse(Arrays.equals(data, decrypt(schwerinKey, hamburgEncryptedTest3)));
-    }
     
     @Test
     public void forceDecryptTest() throws Exception {

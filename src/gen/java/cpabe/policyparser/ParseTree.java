@@ -198,15 +198,10 @@ ASTAttribute jjtn001 = new ASTAttribute(JJTATTRIBUTE);
       att = jj_consume_token(ATTNAME);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OP:
-      case 25:
-      case 26:{
+      case 25:{
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case OP:{
           NumericalAttribute(att);
-          break;
-          }
-        case 26:{
-          GeoHashAttribute(att);
           break;
           }
         case 25:{
@@ -292,32 +287,6 @@ if (jjtc000) {
     }
   }
 
-  final public void GeoHashAttribute(Token name) throws ParseException {/*@bgen(jjtree) GeoHashAttribute */
-        ASTGeoHashAttribute jjtn000 = new ASTGeoHashAttribute(JJTGEOHASHATTRIBUTE);
-        boolean jjtc000 = true;
-        jjtree.openNodeScope(jjtn000);Token lat;
-        Token lon;
-        Token precision;
-        Token approach;
-    try {
-      jj_consume_token(26);
-      lat = jj_consume_token(DOUBLE);
-      jj_consume_token(26);
-      lon = jj_consume_token(DOUBLE);
-      jj_consume_token(26);
-      precision = jj_consume_token(NUMBER);
-      jj_consume_token(26);
-      approach = jj_consume_token(NUMBER);
-jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-jjtn000.setValues(name.image, lon.image, lat.image, precision.image, approach.image);
-    } finally {
-if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-  }
-
   /** Generated Token Manager. */
   public ParseTreeTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -333,7 +302,7 @@ if (jjtc000) {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x400001,0xc0,0xc0,0x830000,0x200,0x6000400,0x6000400,};
+      jj_la1_0 = new int[] {0x400001,0xc0,0xc0,0x830000,0x200,0x2000400,0x2000400,};
    }
 
   /** Constructor with InputStream. */
@@ -461,7 +430,7 @@ if (jjtc000) {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[27];
+    boolean[] la1tokens = new boolean[26];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -475,7 +444,7 @@ if (jjtc000) {
         }
       }
     }
-    for (int i = 0; i < 27; i++) {
+    for (int i = 0; i < 26; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
