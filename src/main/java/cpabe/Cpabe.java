@@ -72,12 +72,26 @@ public class Cpabe {
         AbePrivateKey newPrivateKey = delegate(oldPrivateKey, attributeSubset);
         newPrivateKey.writeToFile(newPrivateKeyFile);
     }
-    
+
+    /**
+     * Decrypts ABE encrypted data from the inputstream and writes that data to the outputstream. Neither stream will be closed.
+     *
+     * @param privateKey the private key to use for the decryption
+     * @param input
+     * @param output
+     */
     public static void decrypt(AbePrivateKey privateKey, InputStream input, OutputStream output) throws IOException, AbeDecryptionException {
     	AbeEncrypted encrypted = AbeEncrypted.readFromStream(privateKey.getPublicKey(), input);
         encrypted.writeDecryptedData(privateKey, output);
     }
-    
+
+    /**
+     * Decrypts ABE encrypted data. The stream in the given AbeEncrypted instance will not be closed.
+     *
+     * @param privateKey
+     * @param encryptedData
+     * @return the decrypted data
+     */
 	public static byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData) throws AbeDecryptionException, IOException {
 	  	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	  	encryptedData.writeDecryptedData(privateKey, out);
@@ -86,25 +100,34 @@ public class Cpabe {
 
     public static void decrypt(File privateKeyFile, File encryptedFile, File decryptedFile) throws IOException, AbeDecryptionException {
         AbePrivateKey privateKey = AbePrivateKey.readFromFile(privateKeyFile);
-        BufferedInputStream in = null;
-        BufferedOutputStream out = null;
-        try {
-	        in = new BufferedInputStream(new FileInputStream(encryptedFile));
-	        out = new BufferedOutputStream(new FileOutputStream(decryptedFile));
-	        decrypt(privateKey, in, out);
-        } finally {
-        	if (out != null) 
-        		out.close();
-        	if (in != null)
-        		in.close();
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(encryptedFile));
+             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(decryptedFile))) {
+            decrypt(privateKey, in, out);
         }
     }
-    
+
+    /**
+     * Encrypts the data of the inputstream with the given policy and writes the result to the outputstream.
+     * Neither stream will be closed after this.
+     *
+     * @param publicKey
+     * @param policy
+     * @param input
+     * @param output
+     */
     public static void encrypt(AbePublicKey publicKey, String policy, InputStream input, OutputStream output) throws AbeEncryptionException, IOException {
         AbeEncrypted encrypted = encrypt(publicKey, policy, input);
         encrypted.writeEncryptedData(output, publicKey);
     }
-    
+
+    /**
+     * Encrypts the data of the inputstream with the given policy. The inputstream will not be closed. To get the encrypted data use the returned AbeEncrypted instance.
+     *
+     * @param publicKey
+     * @param policy
+     * @param input
+     * @return
+     */
     public static AbeEncrypted encrypt(AbePublicKey publicKey, String policy, InputStream input) throws AbeEncryptionException, IOException {
     	try {
 	        String parsedPolicy = PolicyParsing.parsePolicy(policy);
@@ -126,23 +149,16 @@ public class Cpabe {
     }
     
     public static AbeEncrypted encrypt(AbePublicKey publicKey, String policy, byte[] data) throws AbeEncryptionException, IOException {
-    	ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
-    	return encrypt(publicKey, policy, byteIn);
+    	try (ByteArrayInputStream byteIn = new ByteArrayInputStream(data)) {
+            return encrypt(publicKey, policy, byteIn);
+        }
     }
 
     public static void encrypt(File publicKeyFile, String policy, File inputFile, File outputFile) throws IOException, AbeEncryptionException {
         AbePublicKey publicKey = AbePublicKey.readFromFile(publicKeyFile);
-        BufferedInputStream in = null;
-        BufferedOutputStream out = null;
-        try {
-	        in = new BufferedInputStream(new FileInputStream(inputFile));
-	        out = new BufferedOutputStream(new FileOutputStream(outputFile));
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(inputFile));
+             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile))) {
 	        encrypt(publicKey, policy, in, out);
-        } finally {
-        	if (out != null) 
-        		out.close();
-        	if (in != null)
-        		in.close();
         }
     }
 

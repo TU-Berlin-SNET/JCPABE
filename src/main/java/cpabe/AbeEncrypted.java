@@ -40,7 +40,6 @@ public class AbeEncrypted implements AutoCloseable {
 		}
 	}
 
-	// when to close stream?
 	public static AbeEncrypted readFromFile(AbePublicKey publicKey, File file) throws IOException {
 		return AbeEncrypted.readFromStream(publicKey, new BufferedInputStream(new FileInputStream(file)));
 	}
