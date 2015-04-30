@@ -3,6 +3,6 @@
 .project
 *.class
 target/
-javacc/
 .idea/
 *.iml
+build/
