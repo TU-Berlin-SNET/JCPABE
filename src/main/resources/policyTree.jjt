@@ -99,7 +99,7 @@ void Attribute() #void :
 {
     (
     att = <ATTNAME>
-    [ NumericalAttribute(att) | GeoHashAttribute(att) | AreaAttribute(att) ]
+    [ NumericalAttribute(att) | AreaAttribute(att) ]
     { jjtThis.setName(att.image); }
     ) #Attribute(jjtree.nodeArity() < 1)
 } 
@@ -132,23 +132,4 @@ void AreaAttribute(Token name) :
     "~"
     lon2 = <DOUBLE>
     { jjtThis.setValues(name.image, lon1.image, lat1.image, lon2.image, lat2.image); }
-}
-
-void GeoHashAttribute(Token name) :
-{
-	Token lat;
-	Token lon;
-	Token precision;
-	Token approach;
-}
-{
-    ":"
-    lat = <DOUBLE>
-    ":"
-    lon = <DOUBLE>
-    ":"
-    precision = <NUMBER>
-    ":"
-    approach = <NUMBER>
-    { jjtThis.setValues(name.image, lon.image, lat.image, precision.image, approach.image); }
 }
