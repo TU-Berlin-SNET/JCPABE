@@ -57,3 +57,6 @@ compileJavacc {
     inputDirectory = compileJjtree.outputDirectory
     outputDirectory = compileJjtree.outputDirectory
 }
+
+
+//TODO: is there a way to generate the parser in a "source generation" step so that intellij wont complain?
