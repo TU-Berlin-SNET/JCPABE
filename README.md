@@ -2,8 +2,9 @@
 
 #### Notes
 
-This is a heavily modified fork of https://github.com/junwei-wang/cpabe.
-
+JCPABE is an ABE implementation based on the Paper Bethencourt 2007.
+Additionally it also implements area attributes.
+It started out as a fork of https://github.com/junwei-wang/cpabe but has since been mostly rewritten.
 
 #### Dependencies
 Download the source of JPBC from [here](http://sourceforge.net/p/jpbc/code/) (JCPABE has only been tested with version 2.0.0).
