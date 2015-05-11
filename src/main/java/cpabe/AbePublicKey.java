@@ -24,10 +24,8 @@ public class AbePublicKey {
     public Element  h;
     /** G_1 **/
     public Element  f;
-    /** G_2 **/
-    public Element  gp;
     /** G_T **/
-    public Element  g_hat_alpha;
+    public Element  e_g_g_hat_alpha;
 
     /**
      * Creates a new AbePublicKey. This key should only be used after the elements have been set (setElements).
@@ -50,12 +48,11 @@ public class AbePublicKey {
         return p;
     }
 
-    public void setElements(Element g, Element h, Element f, Element gp, Element g_hat_alpha) {
+    public void setElements(Element g, Element h, Element f, Element e_g_g_hat_alpha) {
         this.g = g;
         this.h = h;
         this.f = f;
-        this.gp = gp;
-        this.g_hat_alpha = g_hat_alpha;
+        this.e_g_g_hat_alpha = e_g_g_hat_alpha;
     }
 
     public static AbePublicKey readFromFile(File file) throws IOException {
@@ -71,8 +68,7 @@ public class AbePublicKey {
         publicKey.g = stream.readElement();
         publicKey.h = stream.readElement();
         publicKey.f = stream.readElement();
-        publicKey.gp = stream.readElement();
-        publicKey.g_hat_alpha = stream.readElement();
+        publicKey.e_g_g_hat_alpha = stream.readElement();
         return publicKey;
     }
 
@@ -81,8 +77,7 @@ public class AbePublicKey {
         stream.writeElement(g);
         stream.writeElement(h);
         stream.writeElement(f);
-        stream.writeElement(gp);
-        stream.writeElement(g_hat_alpha);
+        stream.writeElement(e_g_g_hat_alpha);
     }
 
     public void writeToFile(File file) throws IOException {

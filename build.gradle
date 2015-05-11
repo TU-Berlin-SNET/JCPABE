@@ -30,6 +30,11 @@ compileJjtree {
     arguments = [grammar_encoding: 'UTF-8', static: 'false']
 }
 
+compileJavacc {
+    inputDirectory = compileJjtree.outputDirectory
+    outputDirectory = compileJjtree.outputDirectory
+}
+
 sourceSets {
     gen {
         java {
@@ -37,8 +42,6 @@ sourceSets {
         }
     }
 }
-
-
 
 // TODO: remove when javaccPlugin 2.1.1 addresses this issue
 task copyCustomAstClasses (type: Copy) {
@@ -51,11 +54,5 @@ copyCustomAstClasses.outputs.dir 'src/gen'
 clean.dependsOn cleanCopyCustomAstClasses
 
 compileJjtree.dependsOn copyCustomAstClasses
-
-compileJavacc {
-    inputDirectory = compileJjtree.outputDirectory
-    outputDirectory = compileJjtree.outputDirectory
-}
-
 
 //TODO: is there a way to generate the parser in a "source generation" step so that intellij wont complain?

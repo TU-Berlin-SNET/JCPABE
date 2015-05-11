@@ -25,19 +25,17 @@ public class Bsw07 {
      */
     public static AbeSecretMasterKey setup() {
         AbePublicKey pub = new AbePublicKey(AbeSettings.curveParams);
+        Element g = pub.getPairing().getG1().newRandomElement();
         Element alpha = pub.getPairing().getZr().newRandomElement();
-        Element msk_beta = pub.getPairing().getZr().newRandomElement();
-        Element pub_g = pub.getPairing().getG1().newRandomElement();
-        Element pub_gp = pub.getPairing().getG2().newRandomElement();
-        Element msk_g_alpha = pub_gp.duplicate().powZn(alpha);
+        Element beta = pub.getPairing().getZr().newRandomElement();
+        Element beta_inv = beta.duplicate().invert();
 
-        Element beta_inv = msk_beta.duplicate().invert();
-        Element pub_f = pub_g.duplicate().powZn(beta_inv);
-
-        Element pub_h = pub_g.duplicate().powZn(msk_beta);
-        Element pub_g_hat_alpha = pub.getPairing().pairing(pub_g, msk_g_alpha);
-        pub.setElements(pub_g, pub_h, pub_f, pub_gp, pub_g_hat_alpha);
-        return new AbeSecretMasterKey(pub, msk_beta, msk_g_alpha);
+        Element h = g.duplicate().powZn(beta);
+        Element f = g.duplicate().powZn(beta_inv);
+        Element g_hat_alpha = g.duplicate().powZn(alpha);
+        Element e_g_g_hat_alpha = pub.getPairing().pairing(g, g_hat_alpha);
+        pub.setElements(g, h, f, e_g_g_hat_alpha);
+        return new AbeSecretMasterKey(pub, beta, g_hat_alpha);
     }
 
     /**
@@ -45,7 +43,7 @@ public class Bsw07 {
      */
     public static AbePrivateKey keygen(AbeSecretMasterKey msk, String[] attributes) {
         Element r = msk.getPublicKey().getPairing().getZr().newRandomElement();
-        Element g_r = msk.getPublicKey().gp.duplicate().powZn(r);
+        Element g_r = msk.getPublicKey().g.duplicate().powZn(r);
         ArrayList<Bsw07PrivateKeyComponent> components = generatePrivateKeyComponents(msk.getPublicKey(), g_r, attributes);
         Element beta_inv = msk.beta.duplicate().invert();
         Element prv_d = msk.g_alpha.duplicate().mul(g_r).powZn(beta_inv);
@@ -122,16 +120,14 @@ public class Bsw07 {
      * it (although "_" is allowed)
      */
     public static Bsw07CipherAndKey encrypt(AbePublicKey pub, String policy) throws AbeEncryptionException {
-        /* initialize */
         Bsw07PolicyAbstractNode policyTree = Bsw07PolicyAbstractNode.parsePolicy(policy, pub);
 
-        /* compute */
         Element s = pub.getPairing().getZr().newRandomElement();
-        Element m = pub.getPairing().getGT().newRandomElement();
-        Element cs = pub.g_hat_alpha.duplicate().powZn(s).mul(m); /* num_exps++; num_muls++; */
-        Element c = pub.h.duplicate().powZn(s); /* num_exps++; */
+        Element message = pub.getPairing().getGT().newRandomElement();
+        Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message);
+        Element c = pub.h.duplicate().powZn(s);
         policyTree.fillPolicy(pub, s);
-        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), m);
+        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), message);
     }
 
     /**
