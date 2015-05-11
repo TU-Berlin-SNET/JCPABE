@@ -2,9 +2,12 @@
 
 #### Notes
 
-JCPABE is an ABE implementation based on the Paper Bethencourt 2007.
-Additionally it also implements area attributes.
+JCPABE is an ABE implementation based on the paper from [Bethencourt (2007)](http://acsc.cs.utexas.edu/cpabe/).
 It started out as a fork of https://github.com/junwei-wang/cpabe but has since been mostly rewritten.
+
+It supports numerical attributes and an experimental form of area attributes.
+
+This is research software and should not be used in application where actual security is required.
 
 #### Dependencies
 Download the source of JPBC from [here](http://sourceforge.net/p/jpbc/code/) (JCPABE has only been tested with version 2.0.0).
@@ -17,10 +20,17 @@ $ mvn install
 It is also recommended to install the PBC wrapper for JPBC to improve the performance (as explained [here](http://gas.dia.unisa.it/projects/jpbc/docs/pbcwrapper.html)). Note: in Ubuntu the GMP dependency package is called libgmp10.
 
 
-(Optional) If you want to regenerate or modify the parser the parser you need to download the JavaCC binary (6.1.2 was tested) from https://java.net/projects/javacc/downloads/directory/releases
-and place the javacc.jar into <repo>/javacc/bin/lib/
-Alternatively change line 6 of the build.xml file to point towards JavaCC.
-You can then build the parser by running ant.
+#### Build
+To build JCPABE:
+```sh
+$ ./gradlew build
+```
+
+To install it into a local maven repository run:
+```sh
+$ ./gradlew install
+```
+
 
 #### Common Problems (todo)
 
