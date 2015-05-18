@@ -12,11 +12,11 @@ public class BenchmarkRunner {
 
 		benchmark.initializeBenchmark();
 		int warmupRuns = benchmark.numWarmupRuns();
-		benchmark.initializeIteration(0);
+		benchmark.initializeIteration(Benchmark.WARMUP);
 		for (int i = 0; i < warmupRuns; i++) {
-			benchmark.singleRun(0);
+			benchmark.singleRun(Benchmark.WARMUP);
 		}
-		benchmark.destroyIteration(0);
+		benchmark.destroyIteration(Benchmark.WARMUP);
 		
 		int testRuns = benchmark.numIterations();
 		int runsPerRun = benchmark.numRunsPerIteration();

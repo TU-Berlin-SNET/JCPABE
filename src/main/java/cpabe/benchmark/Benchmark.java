@@ -1,6 +1,7 @@
 package cpabe.benchmark;
 
 public abstract class Benchmark {
+    public static int WARMUP = -1;
 	/**
 	 * Is called once before the benchmark starts.
 	 * Is not timed.
@@ -11,6 +12,7 @@ public abstract class Benchmark {
 	
 	/**
 	 * Is called at the start of every iteration, but not at the start of every run.
+	 * Iteration is -1 for warmup
 	 * Is not timed.
 	 * @param iteration
 	 */
@@ -21,7 +23,7 @@ public abstract class Benchmark {
 	
 	/**
 	 * Is called exactly numWarmupRuns() + numBenchmarkRuns() * numRunsPerRun() times.
-	 * @param the current iteration, begins at 0, also 0 for warmup
+	 * @param the current iteration, begins at 0, continously -1 for warmup
 	 */
 	public abstract void singleRun(int iteration);
 	

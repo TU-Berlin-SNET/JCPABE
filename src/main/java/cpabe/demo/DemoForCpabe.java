@@ -12,6 +12,7 @@ import cpabe.Cpabe;
 import cpabe.policy.PolicyParsing;
 import cpabe.policy.Util;
 
+// Only usable/runnable with the geohash branch
 public class DemoForCpabe {
 	static File directory					 = new File("examples");
     static File pubfile                      = new File(directory + "/public_key");
@@ -27,7 +28,7 @@ public class DemoForCpabe {
     static String attribute_test6            = "test = 6";
     static String policy_test                = "test <= 5";
 
-    // location = schwerin oder location = berlin (beides eher grob)
+    // location = schwerin oder location = berlin
     static String geoHash_policy             = "(location:52.52:13.405:20:1 or location:53.63:11.40:24:1)";
     static String geoHash_attribute_schwerin = "location:53.62511:11.41783";
     static String geoHash_attribute_berlin   = "location:52.51300:13.32020";
