@@ -18,18 +18,18 @@ public class BenchmarkRunner {
 		}
 		benchmark.destroyIteration(Benchmark.WARMUP);
 		
-		int testRuns = benchmark.numIterations();
-		int runsPerRun = benchmark.numRunsPerIteration();
-		BenchmarkResult result = new BenchmarkResult(testRuns);
+		int iterations = benchmark.numIterations();
+		int runsPerIteration = benchmark.numRunsPerIteration();
+		BenchmarkResult result = new BenchmarkResult(iterations);
 		
-		for (int iteration = 0; iteration < testRuns; iteration++) {
+		for (int iteration = 0; iteration < iterations; iteration++) {
 			benchmark.initializeIteration(iteration);
 			long start = System.nanoTime();
-			for (int i = 0; i < runsPerRun; i++) {
+			for (int i = 0; i < runsPerIteration; i++) {
 				benchmark.singleRun(iteration);
 			}
 			long end = System.nanoTime();
-			double average = (end - start) / (double) runsPerRun;
+			double average = (end - start) / (double) runsPerIteration;
 			benchmark.destroyIteration(iteration);
 			result.addResult(average);
 		}

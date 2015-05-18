@@ -1,5 +1,9 @@
 package cpabe.benchmark;
 
+import cpabe.AbeDecryptionException;
+
+import java.io.IOException;
+
 public abstract class Benchmark {
     public static int WARMUP = -1;
 	/**
