@@ -34,9 +34,10 @@ public class LocationAttributeAmount extends Benchmark {
         }
         policyNodes.add(""); // this is the one the attributes fulfill
         StringBuilder concatNodes = new StringBuilder();
-        concatNodes.append(policyNodes.remove(0));
+        boolean first = true;
         for (String policyNode : policyNodes) {
-            concatNodes.append(" OR ");
+            if (!first) concatNodes.append(" OR ");
+            else first = false;
             concatNodes.append(policyNode);
         }
         try {
