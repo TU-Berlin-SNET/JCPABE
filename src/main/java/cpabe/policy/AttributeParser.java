@@ -65,7 +65,7 @@ public class AttributeParser {
     // <name><whitespace>*=<whitespace>*<value>
     private final static Pattern NumericalAttributePattern = Pattern.compile(name + "\\s*=\\s*" + numberInt);
     // <name>:<lat>:<lon>
-    private final static String numberDouble = "(\\d+[\\.]\\d*)"; // needs .
+    private final static String numberDouble = "(-?\\d+[\\.]\\d*)"; // needs . as a seperator
     // <name>~<lat>~<lon>
     private final static Pattern AreaAttributePattern = Pattern.compile(name + "~" + numberDouble + "~" + numberDouble);
     public static String parseAttributes(String attributes) throws ParseException {

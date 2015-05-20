@@ -29,7 +29,7 @@ public class BenchmarkResult {
 		for (int i = 0; i < averagedResults.length; i++) {
 			table.append(i + 1);
 			table.append(' ');
-			table.append(averagedResults[i] / 1E9);
+			table.append(averagedResults[i] / 1E9); //convert from ns to s
 			table.append('\n');
 		}
 		return table.toString();

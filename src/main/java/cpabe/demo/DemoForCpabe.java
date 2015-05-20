@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cpabe.benchmark.BenchmarkRunner;
+import cpabe.benchmark.LocationAttributeAmount;
 import it.unisa.dia.gas.jpbc.PairingParameters;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 import cpabe.Cpabe;
@@ -43,28 +45,13 @@ public class DemoForCpabe {
     }
 
     public static void main(String[] args) throws Exception {
-        String attributes = geoHash_attribute_schwerin;
-        String policy = geoHash_policy;
         prepareDirectory();
 
         long timeStart = System.currentTimeMillis();
-        Cpabe.setup(pubfile, mskfile);
-        Cpabe.encrypt(pubfile, policy, inputfile, encfile);
-        Cpabe.keygen(prvfile, mskfile, attributes);
-        Cpabe.decrypt(prvfile, encfile, decfile);
+        BenchmarkRunner.runBenchmark(new LocationAttributeAmount(), new File(directory + "/" + "results.txt"));
+
         long timeEnd = System.currentTimeMillis();
-        
-        
         System.out.println(String.format("this operation took %d ms.", timeEnd - timeStart));
         System.out.println("wasPbcAvailable? "+PairingFactory.getInstance().isPBCAvailable());
-        
-        System.out.println( Util.unsignedToBigInteger(-1L));
-        System.out.println(Util.unsignedToBigInteger(-1L).testBit(0));
-        System.out.println(1L & Long.MIN_VALUE);
-        PolicyParsing.parsePolicy("asd > " + Util.unsignedToBigInteger(-2));
-        
-        double latitude1 = Util.convertLongToLatitude(0);
-        double latitude2 = Util.convertLongToLatitude(50000);
-        System.out.printf("Difference: %.60f%n", (latitude1 - latitude2));
     }
 }

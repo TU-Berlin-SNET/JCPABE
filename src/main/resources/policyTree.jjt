@@ -12,7 +12,7 @@ package cpabe.policyparser;
 
     public class ParseTree {
         public static void main(String[] args) throws ParseException, TokenMgrError {
-            ParseTree tree = new ParseTree( System.in );
+            ParseTree tree = new ParseTree(System.in);
             ASTStart ast = tree.Start();
             ast.dump("");
         }
