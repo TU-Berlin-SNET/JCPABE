@@ -2,7 +2,7 @@
 
 #### Notes
 
-JCPABE is an ABE implementation based on the paper from [Bethencourt (2007)](http://acsc.cs.utexas.edu/cpabe/).
+JCPABE is a Java implementation of the Attribute-based encryption scheme found in the paper from [Bethencourt (2007)](http://acsc.cs.utexas.edu/cpabe/).
 It started out as a fork of https://github.com/junwei-wang/cpabe but has since been mostly rewritten.
 
 It supports numerical attributes and an experimental form of area attributes.
@@ -32,9 +32,7 @@ $ ./gradlew install
 ```
 
 
-#### Common Problems (todo)
+#### Common Problems
 
-jpbc-pbc library can not be found/loaded
-
-Build error when trying to build jpbc-pbc:
-Remove the system JNA library or patch JPBC (todo add link to patch)
+JPBC-PBC library can not be found or loaded:
+Remove the system JNA library or patch JPBC to work with newest JNA.
