@@ -12,12 +12,12 @@ public class Util {
     public static final String GEOHASH_TYPE = "geohash";
     public static final int GEOHASH_MAXBITS = 64;
     public static final BigInteger MIN_UNSIGNED_LONG = BigInteger.ZERO;
+    private static final BigInteger BI_2_64 = BigInteger.ONE.shiftLeft(64);
+    public static final BigInteger MAX_UNSIGNED_LONG = BI_2_64.subtract(BigInteger.ONE);
     public static final BigDecimal MAX_UNSIGNED_LONG_DECIMAL = new BigDecimal(MAX_UNSIGNED_LONG);
     public static final BigDecimal NINETY = BigDecimal.valueOf(90);
     public static final BigDecimal ONEHUNDREDEIGHTY = BigDecimal.valueOf(180);
     public static final BigDecimal THREEHUNDRESIXTY = BigDecimal.valueOf(360);
-    private static final BigInteger BI_2_64 = BigInteger.ONE.shiftLeft(64);
-    public static final BigInteger MAX_UNSIGNED_LONG = BI_2_64.subtract(BigInteger.ONE);
 
     public static BigInteger unsignedToBigInteger(long l) {
         final BigInteger bi = BigInteger.valueOf(l);
