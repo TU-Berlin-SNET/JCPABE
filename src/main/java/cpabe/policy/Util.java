@@ -6,15 +6,17 @@ import java.math.MathContext;
 
 public class Util {
 
-    public static final String      FLEXINT_TYPE    = "flexint";
-    public static final int         FLEXINT_MAXBITS = 64;
+    public static final String FLEXINT_TYPE = "flexint";
+    public static final int FLEXINT_MAXBITS = 64;
 
-    public static final String      GEOHASH_TYPE    = "geohash";
-    public static final int         GEOHASH_MAXBITS = 64;
-
-    private static final BigInteger BI_2_64         = BigInteger.ONE.shiftLeft(64);
-    
+    public static final String GEOHASH_TYPE = "geohash";
+    public static final int GEOHASH_MAXBITS = 64;
     public static final BigInteger MIN_UNSIGNED_LONG = BigInteger.ZERO;
+    public static final BigDecimal MAX_UNSIGNED_LONG_DECIMAL = new BigDecimal(MAX_UNSIGNED_LONG);
+    public static final BigDecimal NINETY = BigDecimal.valueOf(90);
+    public static final BigDecimal ONEHUNDREDEIGHTY = BigDecimal.valueOf(180);
+    public static final BigDecimal THREEHUNDRESIXTY = BigDecimal.valueOf(360);
+    private static final BigInteger BI_2_64 = BigInteger.ONE.shiftLeft(64);
     public static final BigInteger MAX_UNSIGNED_LONG = BI_2_64.subtract(BigInteger.ONE);
 
     public static BigInteger unsignedToBigInteger(long l) {
@@ -54,32 +56,27 @@ public class Util {
         }
         return comp;
     }
-    
-    
-    public static final BigDecimal MAX_UNSIGNED_LONG_DECIMAL = new BigDecimal(MAX_UNSIGNED_LONG);
-    public static final BigDecimal NINETY = BigDecimal.valueOf(90);
-    public static final BigDecimal ONEHUNDREDEIGHTY = BigDecimal.valueOf(180);
-    public static final BigDecimal THREEHUNDRESIXTY = BigDecimal.valueOf(360);
+
     public static BigInteger convertLatitudeToLong(double lat) {
-    	if (Math.abs(lat) > 90) throw new IllegalArgumentException("Latitude can only be between -90 and 90");
-    	BigDecimal decimal = BigDecimal.valueOf(lat);
-    	//truncating ok, since number is always positive and would ne to be rounded down anyway
-    	return decimal.add(NINETY).divide(ONEHUNDREDEIGHTY, MathContext.DECIMAL128).multiply(MAX_UNSIGNED_LONG_DECIMAL).toBigInteger(); 
+        if (Math.abs(lat) > 90) throw new IllegalArgumentException("Latitude can only be between -90 and 90");
+        BigDecimal decimal = BigDecimal.valueOf(lat);
+        //truncating ok, since number is always positive and would ne to be rounded down anyway
+        return decimal.add(NINETY).divide(ONEHUNDREDEIGHTY, MathContext.DECIMAL128).multiply(MAX_UNSIGNED_LONG_DECIMAL).toBigInteger();
     }
-    
+
     public static double convertLongToLatitude(long lat) { // only used for previewing the resulting value, and unit tests
-    	BigDecimal latitude = new BigDecimal(unsignedToBigInteger(lat));
-    	return latitude.divide(MAX_UNSIGNED_LONG_DECIMAL, MathContext.DECIMAL128).multiply(ONEHUNDREDEIGHTY).subtract(NINETY).doubleValue();
+        BigDecimal latitude = new BigDecimal(unsignedToBigInteger(lat));
+        return latitude.divide(MAX_UNSIGNED_LONG_DECIMAL, MathContext.DECIMAL128).multiply(ONEHUNDREDEIGHTY).subtract(NINETY).doubleValue();
     }
-    
+
     public static BigInteger convertLongitudeToLong(double lng) {
-    	if (Math.abs(lng) > 180) throw new IllegalArgumentException("Longitude can only be between -180 and 180");
-    	BigDecimal decimal = BigDecimal.valueOf(lng);
-    	return decimal.add(ONEHUNDREDEIGHTY).divide(THREEHUNDRESIXTY, MathContext.DECIMAL128).multiply(MAX_UNSIGNED_LONG_DECIMAL).toBigInteger(); 
+        if (Math.abs(lng) > 180) throw new IllegalArgumentException("Longitude can only be between -180 and 180");
+        BigDecimal decimal = BigDecimal.valueOf(lng);
+        return decimal.add(ONEHUNDREDEIGHTY).divide(THREEHUNDRESIXTY, MathContext.DECIMAL128).multiply(MAX_UNSIGNED_LONG_DECIMAL).toBigInteger();
     }
-    
+
     public static double convertLongToLongitude(long lng) {
-    	BigDecimal latitude = new BigDecimal(unsignedToBigInteger(lng));
-    	return latitude.divide(MAX_UNSIGNED_LONG_DECIMAL, MathContext.DECIMAL128).multiply(THREEHUNDRESIXTY).subtract(ONEHUNDREDEIGHTY).doubleValue();
+        BigDecimal latitude = new BigDecimal(unsignedToBigInteger(lng));
+        return latitude.divide(MAX_UNSIGNED_LONG_DECIMAL, MathContext.DECIMAL128).multiply(THREEHUNDRESIXTY).subtract(ONEHUNDREDEIGHTY).doubleValue();
     }
 }

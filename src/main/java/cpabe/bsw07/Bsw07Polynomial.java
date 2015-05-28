@@ -13,9 +13,8 @@ public class Bsw07Polynomial {
     /**
      * Generates a new polynomial with random coefficients of the element type given as zeroVal. The 0th coefficient has the same
      * value as zeroVal.
-     * 
-     * @param deg
-     *            number of coefficients
+     *
+     * @param deg     number of coefficients
      * @param zeroVal
      */
     public static Bsw07Polynomial createRandom(int deg, Element zeroVal) {

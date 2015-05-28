@@ -1,6 +1,9 @@
 package cpabe.benchmark;
 
-import cpabe.*;
+import cpabe.AbeEncrypted;
+import cpabe.AbePrivateKey;
+import cpabe.AbeSecretMasterKey;
+import cpabe.Cpabe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,10 +29,10 @@ public class LocationAttributeAmount extends Benchmark {
         int numPolicyNodes = (int) Math.pow(2, iteration);
         List<String> policyNodes = new ArrayList<String>(numPolicyNodes);
         for (int i = 1; i < numPolicyNodes; i++) {
-            double lng1 = 0 + i*0.01;
-            double lat1 = 0 + i*0.01;
-            double lng2 = 0.01 + i*0.01;
-            double lat2 = 0.01 + i*0.01;
+            double lng1 = 0 + i * 0.01;
+            double lat1 = 0 + i * 0.01;
+            double lng2 = 0.01 + i * 0.01;
+            double lat2 = 0.01 + i * 0.01;
             String policyNode = String.format("location~%f~%f~%f~%f", lng1, lat1, lng2, lat2); //filler
             policyNodes.add(policyNode);
         }

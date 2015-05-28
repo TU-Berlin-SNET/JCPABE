@@ -6,8 +6,8 @@ public class ASTNumericalAttribute extends SimpleNode {
     private String name;
     private String op;
     private BigInteger value;
-    
-    
+
+
     public ASTNumericalAttribute(int id) {
         super(id);
     }
@@ -15,7 +15,7 @@ public class ASTNumericalAttribute extends SimpleNode {
     public ASTNumericalAttribute(ParseTree p, int id) {
         super(p, id);
     }
-    
+
     public void setValues(String name, String op, String number) {
         this.name = name;
         this.op = op;
@@ -25,15 +25,15 @@ public class ASTNumericalAttribute extends SimpleNode {
     public String getName() {
         return name;
     }
-    
+
     public String getOp() {
         return op;
     }
-    
+
     public BigInteger getValue() {
         return value;
     }
-    
+
     public String toString() {
         return "NumericalAttribute: " + name + " " + op + " " + value;
     }

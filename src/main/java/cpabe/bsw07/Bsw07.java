@@ -1,23 +1,17 @@
 package cpabe.bsw07;
 
+import cpabe.*;
+import cpabe.bsw07.policy.Bsw07PolicyAbstractNode;
+import cpabe.bsw07.policy.Bsw07PolicyLeafNode;
+import cpabe.bsw07.policy.Bsw07PolicyParentNode;
 import it.unisa.dia.gas.jpbc.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cpabe.AbeDecryptionException;
-import cpabe.AbeEncryptionException;
-import cpabe.AbePrivateKey;
-import cpabe.AbePublicKey;
-import cpabe.AbeSecretMasterKey;
-import cpabe.AbeSettings;
-import cpabe.bsw07.policy.Bsw07PolicyAbstractNode;
-import cpabe.bsw07.policy.Bsw07PolicyLeafNode;
-import cpabe.bsw07.policy.Bsw07PolicyParentNode;
-
 public class Bsw07 {
 
-    private static final String ATTRIBUTE_NOT_FOUND     = "an attribute was not found in the source private key";
+    private static final String ATTRIBUTE_NOT_FOUND = "an attribute was not found in the source private key";
     private static final String ATTRIBUTES_DONT_SATISFY = "decryption failed: attributes in key do not satisfy policy";
 
     /**
@@ -67,7 +61,7 @@ public class Bsw07 {
      * Generates additional attributes for a given value priv_d, which should come from a private key. The private key needs to
      * have been generated with the same master key as msk. The private key components returned by this method can be added to a
      * private key, thus adding the given attributes to the private key.
-     * 
+     *
      * @param msk
      * @param priv_d
      * @param newAttributes
@@ -107,15 +101,15 @@ public class Bsw07 {
 
     /**
      * Pick a random group element and encrypt it under the specified access policy. The resulting ciphertext is returned.
-     * 
+     * <p/>
      * After using this function, it is normal to extract the random data in m using the pbc functions element_length_in_bytes and
      * element_to_bytes and use it as a key for hybrid encryption.
-     * 
+     * <p/>
      * The policy is specified as a simple string which encodes a postorder traversal of threshold tree defining the access
      * policy. As an example,
-     * 
+     * <p/>
      * "foo bar fim 2of3 baf 1of2"
-     * 
+     * <p/>
      * specifies a policy with two threshold gates and four leaves. It is not possible to specify an attribute with whitespace in
      * it (although "_" is allowed)
      */
@@ -132,7 +126,7 @@ public class Bsw07 {
 
     /**
      * Decrypt the specified ciphertext using the given private key, return the decrypted element m.
-     * 
+     * <p/>
      * Throws an exception if decryption was not possible.
      */
     public static Element decrypt(AbePrivateKey privateKey, Bsw07Cipher cipher) throws AbeDecryptionException {
@@ -147,11 +141,11 @@ public class Bsw07 {
         t = privateKey.getPublicKey().getPairing().pairing(cipher.getC(), privateKey.getD()).invert();
         return m.mul(t); /* num_muls++; */
     }
-    
+
     public static boolean canDecrypt(AbePrivateKey prv, Bsw07Cipher cph) {
-    	return cph.policyTree.checkSatisfy(prv);
+        return cph.policyTree.checkSatisfy(prv);
     }
-    
+
     public static ArrayList<Bsw07PrivateKeyComponent> generateAdditionalAttributes(AbeSecretMasterKey msk, Element priv_d, List<Element> newHashedAttributes) {
         Element g_r = priv_d.duplicate().powZn(msk.beta).div(msk.g_alpha);
         ArrayList<Bsw07PrivateKeyComponent> components = new ArrayList<Bsw07PrivateKeyComponent>(newHashedAttributes.size());
@@ -164,32 +158,32 @@ public class Bsw07 {
         }
         return components;
     }
-    
+
     /**
      * Creates a private key that fulfills all attributes of the given cipher.
-     * 
+     *
      * @param secretKey
      * @param cph
      * @return
      * @throws AbeDecryptionException
      */
     public static AbePrivateKey keygen(AbeSecretMasterKey secretKey, Bsw07Cipher cph) {
-    	AbePrivateKey emptyKey = keygen(secretKey, new String[]{});
+        AbePrivateKey emptyKey = keygen(secretKey, new String[]{});
 
-    	List<Element> hashedAttributes = new ArrayList<Element>();
-    	ArrayList<Bsw07PolicyAbstractNode> curNodes = new ArrayList<Bsw07PolicyAbstractNode>();
-    	curNodes.add(cph.policyTree);
-    	
-    	while (!curNodes.isEmpty()) {
-    		Bsw07PolicyAbstractNode curNode = curNodes.remove(0);
-    		if (curNode instanceof Bsw07PolicyLeafNode) {
-    			hashedAttributes.add(((Bsw07PolicyLeafNode) curNode).getHashedAttribute());
-    		} else { // is ParentNode
-    			curNodes.addAll(((Bsw07PolicyParentNode) curNode).getChildren());
-    		}
-    	}
-    	
-    	AbePrivateKey filledKey = emptyKey.newKeyWithAddedAttributes(generateAdditionalAttributes(secretKey, emptyKey.getD(), hashedAttributes));
-    	return filledKey;
+        List<Element> hashedAttributes = new ArrayList<Element>();
+        ArrayList<Bsw07PolicyAbstractNode> curNodes = new ArrayList<Bsw07PolicyAbstractNode>();
+        curNodes.add(cph.policyTree);
+
+        while (!curNodes.isEmpty()) {
+            Bsw07PolicyAbstractNode curNode = curNodes.remove(0);
+            if (curNode instanceof Bsw07PolicyLeafNode) {
+                hashedAttributes.add(((Bsw07PolicyLeafNode) curNode).getHashedAttribute());
+            } else { // is ParentNode
+                curNodes.addAll(((Bsw07PolicyParentNode) curNode).getChildren());
+            }
+        }
+
+        AbePrivateKey filledKey = emptyKey.newKeyWithAddedAttributes(generateAdditionalAttributes(secretKey, emptyKey.getD(), hashedAttributes));
+        return filledKey;
     }
 }

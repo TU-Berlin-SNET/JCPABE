@@ -7,25 +7,25 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class AbeInputStream extends DataInputStream {
-    private final String       PUB_MISSING_ERROR = "Can't read Elements without the public master key.";
+    private final String PUB_MISSING_ERROR = "Can't read Elements without the public master key.";
 
     private AbePublicKey publicKey;
 
     public AbeInputStream(InputStream in, AbePublicKey publicKey) {
-    	super(in);
-    	this.publicKey = publicKey;
+        super(in);
+        this.publicKey = publicKey;
     }
 
     /**
      * If you use this constructor you need to manually set the public key before reading any elements.
-     * 
+     *
      * @param in
      */
     public AbeInputStream(InputStream in) {
-    	this(in, null);
-	}
+        this(in, null);
+    }
 
-	public void setPublicKey(AbePublicKey pubKey) {
+    public void setPublicKey(AbePublicKey pubKey) {
         this.publicKey = pubKey;
     }
 

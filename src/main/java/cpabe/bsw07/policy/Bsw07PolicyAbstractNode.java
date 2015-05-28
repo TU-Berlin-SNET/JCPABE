@@ -1,42 +1,15 @@
 package cpabe.bsw07.policy;
 
+import cpabe.*;
+import it.unisa.dia.gas.jpbc.Element;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import cpabe.AbeEncryptionException;
-import cpabe.AbeInputStream;
-import cpabe.AbeOutputStream;
-import cpabe.AbePrivateKey;
-import cpabe.AbePublicKey;
-import it.unisa.dia.gas.jpbc.Element;
-
 public abstract class Bsw07PolicyAbstractNode {
     protected boolean satisfiable;
-    protected int     minLeaves;
-
-    public abstract void fillPolicy(AbePublicKey pub, Element e);
-
-    protected abstract boolean checkSatisfySpecific(AbePrivateKey prv);
-
-    public boolean checkSatisfy(AbePrivateKey prv) {
-        satisfiable = checkSatisfySpecific(prv);
-        return satisfiable;
-    }
-
-    public abstract void pickSatisfyMinLeaves(AbePrivateKey prv);
-
-    protected abstract void decFlattenSpecific(Element r, Element one, AbePrivateKey prv);
-
-    public void decFlatten(Element r, AbePrivateKey prv) {
-        Element one = prv.getPublicKey().getPairing().getZr().newOneElement();
-        r.setToOne();
-        decFlattenSpecific(r, one, prv);
-    }
-
-    public abstract int getThreshold();
-
-    public abstract void writeToStream(AbeOutputStream stream) throws IOException;
+    protected int minLeaves;
 
     public static Bsw07PolicyAbstractNode readFromStream(AbeInputStream stream) throws IOException {
         int threshold = stream.readInt();
@@ -98,4 +71,27 @@ public abstract class Bsw07PolicyAbstractNode {
         }
         return stack.get(0); // the root of the tree
     }
+
+    public abstract void fillPolicy(AbePublicKey pub, Element e);
+
+    protected abstract boolean checkSatisfySpecific(AbePrivateKey prv);
+
+    public boolean checkSatisfy(AbePrivateKey prv) {
+        satisfiable = checkSatisfySpecific(prv);
+        return satisfiable;
+    }
+
+    public abstract void pickSatisfyMinLeaves(AbePrivateKey prv);
+
+    protected abstract void decFlattenSpecific(Element r, Element one, AbePrivateKey prv);
+
+    public void decFlatten(Element r, AbePrivateKey prv) {
+        Element one = prv.getPublicKey().getPairing().getZr().newOneElement();
+        r.setToOne();
+        decFlattenSpecific(r, one, prv);
+    }
+
+    public abstract int getThreshold();
+
+    public abstract void writeToStream(AbeOutputStream stream) throws IOException;
 }

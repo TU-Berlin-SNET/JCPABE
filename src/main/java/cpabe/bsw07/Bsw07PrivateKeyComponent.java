@@ -4,11 +4,17 @@ import it.unisa.dia.gas.jpbc.Element;
 
 public class Bsw07PrivateKeyComponent {
     /* these actually get serialized */
-    /** G2 **/
+    /**
+     * G2
+     **/
     public Element hashedAttribute;
-    /** G2 **/
+    /**
+     * G2
+     **/
     public Element d;
-    /** G2 **/
+    /**
+     * G2
+     **/
     public Element dp;
 
     public Bsw07PrivateKeyComponent(Element hashedAttribute, Element d, Element dp) {

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class AbeOutputStream extends DataOutputStream {
-    
+
     private AbePublicKey pubKey;
 
     public AbeOutputStream(OutputStream out, AbePublicKey pubKey) {

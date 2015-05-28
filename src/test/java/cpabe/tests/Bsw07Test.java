@@ -1,32 +1,27 @@
 package cpabe.tests;
 
-import static org.junit.Assert.*;
+import cpabe.*;
+import cpabe.policy.Util;
+import cpabe.tests.rules.Repeat;
+import cpabe.tests.rules.RepeatRule;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-
-import cpabe.AbeEncrypted;
-import cpabe.AbeEncryptionException;
-import cpabe.AbePrivateKey;
-import cpabe.AbePublicKey;
-import cpabe.AbeSecretMasterKey;
-import cpabe.Cpabe;
-import cpabe.CpabeExperimental;
-import cpabe.policy.Util;
-import cpabe.tests.rules.Repeat;
-import cpabe.tests.rules.RepeatRule;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class Bsw07Test {
 
     private static SecureRandom random;
 
-    @Rule public RepeatRule repeatRule = new RepeatRule();
-    
+    @Rule
+    public RepeatRule repeatRule = new RepeatRule();
+
     @BeforeClass
     public static void testSetup() {
         random = new SecureRandom();
@@ -46,13 +41,13 @@ public class Bsw07Test {
             return null;
         }
     }
-    
+
     private byte[] forceDecrypt(AbeSecretMasterKey secretKey, AbeEncrypted encryptedData) {
-    	try {
-    		return CpabeExperimental.forceDecrypt(secretKey, encryptedData);
-    	} catch (Exception e) {
-    		return null;
-    	}
+        try {
+            return CpabeExperimental.forceDecrypt(secretKey, encryptedData);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Test
@@ -67,19 +62,19 @@ public class Bsw07Test {
 
         AbeEncrypted policy1EncryptedTest1 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest1 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest2 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest2 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest3 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest3 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest4 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest4 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest5 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest5 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest6 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest6 = Cpabe.encrypt(pubKey, policy2, data);
 
@@ -91,7 +86,7 @@ public class Bsw07Test {
 
         assertTrue(Arrays.equals(data, decrypt(att1att2Key, policy1EncryptedTest1)));
         assertFalse(Arrays.equals(data, decrypt(att1att2Key, policy2EncryptedTest1)));
-        
+
         assertTrue(Arrays.equals(data, decrypt(att3att4Key, policy1EncryptedTest2)));
         assertTrue(Arrays.equals(data, decrypt(att3att4Key, policy2EncryptedTest2)));
 
@@ -125,16 +120,16 @@ public class Bsw07Test {
 
         AbeEncrypted policy1EncryptedTest1 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest1 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest2 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest2 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest3 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest3 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest4 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest4 = Cpabe.encrypt(pubKey, policy2, data);
-        
+
         AbeEncrypted policy1EncryptedTest5 = Cpabe.encrypt(pubKey, policy1, data);
         AbeEncrypted policy2EncryptedTest5 = Cpabe.encrypt(pubKey, policy2, data);
 
@@ -146,7 +141,7 @@ public class Bsw07Test {
 
         assertTrue(Arrays.equals(data, decrypt(att1att2Key, policy1EncryptedTest1)));
         assertFalse(Arrays.equals(data, decrypt(att1att2Key, policy2EncryptedTest1)));
-        
+
         assertFalse(Arrays.equals(data, decrypt(att1Key, policy1EncryptedTest2)));
         assertFalse(Arrays.equals(data, decrypt(att1Key, policy2EncryptedTest2)));
 
@@ -172,33 +167,33 @@ public class Bsw07Test {
         System.out.println("Current Number: " + number);
         testComparisonOperations(number);
     }
-    
+
     @Test
     public void specificNumberTest() throws Exception {
-    	testComparisonOperations(BigInteger.ONE);
-    	testComparisonOperations(Util.MAX_UNSIGNED_LONG.subtract(BigInteger.valueOf(2))); // max Long - 2
+        testComparisonOperations(BigInteger.ONE);
+        testComparisonOperations(Util.MAX_UNSIGNED_LONG.subtract(BigInteger.valueOf(2))); // max Long - 2
     }
-    
-    @Test(expected=AbeEncryptionException.class)
+
+    @Test(expected = AbeEncryptionException.class)
     public void zeroNumberTest() throws Exception {
-    	testComparisonOperations(Util.MIN_UNSIGNED_LONG); // works for most operators, but fails at >= 0, since that is converted to > -1
+        testComparisonOperations(Util.MIN_UNSIGNED_LONG); // works for most operators, but fails at >= 0, since that is converted to > -1
     }
-    
-    @Test(expected=AbeEncryptionException.class)
+
+    @Test(expected = AbeEncryptionException.class)
     public void maxLongTest() throws Exception {
-    	testComparisonOperations(Util.MAX_UNSIGNED_LONG);
+        testComparisonOperations(Util.MAX_UNSIGNED_LONG);
     }
-    
-    @Test(expected=AbeEncryptionException.class)
+
+    @Test(expected = AbeEncryptionException.class)
     public void notQuiteMaxLongTest() throws Exception {
-    	testComparisonOperations(Util.MAX_UNSIGNED_LONG.subtract(BigInteger.ONE)); // works for most operators, but fails at <= maxLong - 1 since that is converted to < maxLong, which wont work
+        testComparisonOperations(Util.MAX_UNSIGNED_LONG.subtract(BigInteger.ONE)); // works for most operators, but fails at <= maxLong - 1 since that is converted to < maxLong, which wont work
     }
-    
+
     public void testComparisonOperations(BigInteger number) throws Exception {
-    	AbeSecretMasterKey secretKey = Cpabe.setup();
-    	byte[] data = getRandomData();
-    	AbePublicKey publicKey = secretKey.getPublicKey();
-    	
+        AbeSecretMasterKey secretKey = Cpabe.setup();
+        byte[] data = getRandomData();
+        AbePublicKey publicKey = secretKey.getPublicKey();
+
         String greaterPolicy = "someNumber > " + number;
         String greaterEqPolicy = "someNumber >= " + number;
         String smallerPolicy = "someNumber < " + number;
@@ -211,13 +206,13 @@ public class Bsw07Test {
         AbeEncrypted smallerEncryptedTest1 = Cpabe.encrypt(publicKey, smallerPolicy, data);
         AbeEncrypted smallerEqEncryptedTest1 = Cpabe.encrypt(publicKey, smallerEqPolicy, data);
         AbeEncrypted equalEncryptedTest1 = Cpabe.encrypt(publicKey, equalPolicy, data);
-        
+
         AbeEncrypted greaterEncryptedTest2 = Cpabe.encrypt(publicKey, greaterPolicy, data);
         AbeEncrypted greaterEqEncryptedTest2 = Cpabe.encrypt(publicKey, greaterEqPolicy, data);
         AbeEncrypted smallerEncryptedTest2 = Cpabe.encrypt(publicKey, smallerPolicy, data);
         AbeEncrypted smallerEqEncryptedTest2 = Cpabe.encrypt(publicKey, smallerEqPolicy, data);
         AbeEncrypted equalEncryptedTest2 = Cpabe.encrypt(publicKey, equalPolicy, data);
-        
+
         AbeEncrypted greaterEncryptedTest3 = Cpabe.encrypt(publicKey, greaterPolicy, data);
         AbeEncrypted greaterEqEncryptedTest3 = Cpabe.encrypt(publicKey, greaterEqPolicy, data);
         AbeEncrypted smallerEncryptedTest3 = Cpabe.encrypt(publicKey, smallerPolicy, data);
@@ -231,7 +226,7 @@ public class Bsw07Test {
         AbePrivateKey greaterKey = Cpabe.keygen(secretKey, greaterAttribute);
         AbePrivateKey smallerKey = Cpabe.keygen(secretKey, smallerAttribute);
         AbePrivateKey equalKey = Cpabe.keygen(secretKey, equalAttribute);
-        
+
         // greaterKey
         assertTrue(Arrays.equals(data, decrypt(greaterKey, greaterEncryptedTest1)));
         assertTrue(Arrays.equals(data, decrypt(greaterKey, greaterEqEncryptedTest1)));
@@ -253,7 +248,7 @@ public class Bsw07Test {
         assertTrue(Arrays.equals(data, decrypt(equalKey, smallerEqEncryptedTest3)));
         assertTrue(Arrays.equals(data, decrypt(equalKey, equalEncryptedTest3)));
     }
-    
+
     @Test
     public void forceDecryptTest() throws Exception {
         AbeSecretMasterKey smKey = Cpabe.setup();
@@ -270,7 +265,7 @@ public class Bsw07Test {
         AbeEncrypted greaterEqEncrypted = Cpabe.encrypt(pubKey, greaterEqPolicy, data);
         AbeEncrypted smallerEncrypted = Cpabe.encrypt(pubKey, smallerPolicy, data);
         AbeEncrypted smallerEqEncrypted = Cpabe.encrypt(pubKey, smallerEqPolicy, data);
-        
+
         assertTrue(Arrays.equals(data, forceDecrypt(smKey, greaterEncrypted)));
         assertTrue(Arrays.equals(data, forceDecrypt(smKey, greaterEqEncrypted)));
         assertTrue(Arrays.equals(data, forceDecrypt(smKey, smallerEncrypted)));

@@ -1,12 +1,11 @@
 package cpabe.bsw07;
 
+import cpabe.AbePublicKey;
+import cpabe.AbeSettings;
 import it.unisa.dia.gas.jpbc.Element;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import cpabe.AbePublicKey;
-import cpabe.AbeSettings;
 
 public class Bsw07Util {
     public static Element elementG2FromString(String s, AbePublicKey publicKey) {

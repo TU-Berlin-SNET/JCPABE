@@ -1,7 +1,5 @@
 package cpabe.bsw07.policy;
 
-import java.io.IOException;
-
 import cpabe.AbeOutputStream;
 import cpabe.AbePrivateKey;
 import cpabe.AbePublicKey;
@@ -9,13 +7,21 @@ import cpabe.bsw07.Bsw07PrivateKeyComponent;
 import cpabe.bsw07.Bsw07Util;
 import it.unisa.dia.gas.jpbc.Element;
 
+import java.io.IOException;
+
 public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
     private Bsw07PrivateKeyComponent satisfyingComponent = null;
-    /** G2 **/
+    /**
+     * G2
+     **/
     private Element hashedAttribute;
-    /** G1 **/
+    /**
+     * G1
+     **/
     private Element c;
-    /** G1 **/
+    /**
+     * G1
+     **/
     private Element cp;
 
     protected Bsw07PolicyLeafNode(Element hashedAttribute, Element c, Element cp) {
@@ -23,7 +29,7 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
         this.c = c;
         this.cp = cp;
     }
-    
+
     public Bsw07PolicyLeafNode(String attribute, AbePublicKey publicKey) {
         this(Bsw07Util.elementG2FromString(attribute, publicKey));
     }
@@ -57,8 +63,8 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
 
     @Override
     protected boolean checkSatisfySpecific(AbePrivateKey prv) {
-    	satisfyingComponent = prv.getSatisfyingComponent(getHashedAttribute());
-    	return satisfyingComponent != null;
+        satisfyingComponent = prv.getSatisfyingComponent(getHashedAttribute());
+        return satisfyingComponent != null;
     }
 
     @Override

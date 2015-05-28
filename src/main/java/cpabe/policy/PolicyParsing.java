@@ -1,8 +1,8 @@
 package cpabe.policy;
 
-import java.math.BigInteger;
-
 import cpabe.policyparser.*;
+
+import java.math.BigInteger;
 
 public class PolicyParsing {
     private static final BigInteger BI_2_32 = BigInteger.ONE.shiftLeft(32);
@@ -10,14 +10,16 @@ public class PolicyParsing {
     private static final BigInteger BI_2_08 = BigInteger.ONE.shiftLeft(8);
     private static final BigInteger BI_2_04 = BigInteger.ONE.shiftLeft(4);
     private static final BigInteger BI_2_02 = BigInteger.ONE.shiftLeft(2);
+    private static final boolean IS_GREATER = true;
+    private static final boolean IS_SMALLER = !IS_GREATER;
 
     public static String parsePolicy(String input) throws ParseException {
-    	try {
-			ASTStart policy = ParseTree.createParseTree(input.replace(",", ".")); //Replacing all "," to fix locale issues
-			return postFix(policy);
-    	} catch (TokenMgrError e) {
-    		throw new ParseException(e.getMessage());
-    	}
+        try {
+            ASTStart policy = ParseTree.createParseTree(input.replace(",", ".")); //Replacing all "," to fix locale issues
+            return postFix(policy);
+        } catch (TokenMgrError e) {
+            throw new ParseException(e.getMessage());
+        }
     }
 
     private static String postFix(ASTStart root) throws ParseException {
@@ -41,7 +43,7 @@ public class PolicyParsing {
         } else if (current instanceof ASTNumericalAttribute) {
             handleNumericalAttribute((ASTNumericalAttribute) current, retVal);
         } else if (current instanceof ASTAreaAttribute) {
-        	handleAreaAttribute((ASTAreaAttribute) current, retVal);
+            handleAreaAttribute((ASTAreaAttribute) current, retVal);
         } else if (!(current instanceof ASTStart)) {
             throw new ParseException("Unknown node found in tree.");
         }
@@ -49,7 +51,7 @@ public class PolicyParsing {
         return retVal.append(' ');
     }
 
-	private static void handleAreaAttribute(ASTAreaAttribute current, StringBuffer retVal) throws ParseException {
+    private static void handleAreaAttribute(ASTAreaAttribute current, StringBuffer retVal) throws ParseException {
         String attributeName = current.getName();
         double minLat = Math.min(current.getLatitude1(), current.getLatitude2());
         double maxLat = Math.max(current.getLatitude1(), current.getLatitude2());
@@ -79,8 +81,6 @@ public class PolicyParsing {
         retVal.append(current.getName());
     }
 
-    private static final boolean IS_GREATER = true;
-    private static final boolean IS_SMALLER = !IS_GREATER;
     private static void handleNumericalAttribute(ASTNumericalAttribute current, StringBuffer retVal) throws ParseException {
         BigInteger bigValue = current.getValue();
         if (current.getOp().equals("=")) {
@@ -97,20 +97,20 @@ public class PolicyParsing {
             throw new ParseException("Unknown comparison operator found.");
         }
     }
-    
+
     private static void handleNumericalAttribute(String name, boolean greaterThan, BigInteger number, StringBuffer retVal) throws ParseException {
-    	if (number.compareTo(Util.MIN_UNSIGNED_LONG) < 0 || number.compareTo(Util.MAX_UNSIGNED_LONG) >= 0) {
-    		throw new ParseException("Only non-negative numbers until 2^64 - 1 are supported. Current number: " + number);
-    	}
-    	
+        if (number.compareTo(Util.MIN_UNSIGNED_LONG) < 0 || number.compareTo(Util.MAX_UNSIGNED_LONG) >= 0) {
+            throw new ParseException("Only non-negative numbers until 2^64 - 1 are supported. Current number: " + number);
+        }
+
         long numberLong = number.longValue();
 
         // bit_marker_list()
         int bits = (number.compareTo(BI_2_32) >= 0 ? 64 :
-                    number.compareTo(BI_2_16) >= 0 ? 32 :
-                    number.compareTo(BI_2_08) >= 0 ? 16 :
-                    number.compareTo(BI_2_04) >= 0 ? 8 :
-                    number.compareTo(BI_2_02) >= 0 ? 4 : 2);
+                number.compareTo(BI_2_16) >= 0 ? 32 :
+                        number.compareTo(BI_2_08) >= 0 ? 16 :
+                                number.compareTo(BI_2_04) >= 0 ? 8 :
+                                        number.compareTo(BI_2_02) >= 0 ? 4 : 2);
         int i = 0;
         if (greaterThan) {
             while ((1L << i & numberLong) != 0) i++;

@@ -1,24 +1,18 @@
 package cpabe.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import cpabe.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import cpabe.AbeEncrypted;
-import cpabe.AbePrivateKey;
-import cpabe.AbePublicKey;
-import cpabe.AbeSecretMasterKey;
-import cpabe.Cpabe;
-import cpabe.CpabeWeber;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class WeberTest {
     private static SecureRandom random;
-	
+
     @BeforeClass
     public static void testSetup() {
         random = new SecureRandom();
@@ -38,7 +32,7 @@ public class WeberTest {
             return null;
         }
     }
-    
+
     @Test
     public void numberTest() throws Exception {
         AbeSecretMasterKey smKey = CpabeWeber.setup();
@@ -46,10 +40,10 @@ public class WeberTest {
 
         byte[] data = getRandomData();
         String policy = "trivial and to and decrypt";
-        
+
         byte[] lbeKey1 = new byte[16];
         random.nextBytes(lbeKey1);
-        
+
         byte[] lbeKey2 = new byte[16];
         random.nextBytes(lbeKey2);
 
@@ -58,7 +52,7 @@ public class WeberTest {
         AbeEncrypted withFirstLbeKey2 = CpabeWeber.encrypt(pubKey, policy, data, lbeKey1);
         AbeEncrypted withSecondLbeKey1 = CpabeWeber.encrypt(pubKey, policy, data, lbeKey2);
         AbeEncrypted withSecondLbeKey2 = CpabeWeber.encrypt(pubKey, policy, data, lbeKey2);
-        
+
         String allAttributes = "trivial to decrypt";
         AbePrivateKey allKey = Cpabe.keygen(smKey, allAttributes);
 

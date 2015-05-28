@@ -1,5 +1,9 @@
 package cpabe.bsw07.policy;
 
+import cpabe.AbeOutputStream;
+import cpabe.AbePrivateKey;
+import cpabe.AbePublicKey;
+import cpabe.bsw07.Bsw07Polynomial;
 import it.unisa.dia.gas.jpbc.Element;
 
 import java.io.IOException;
@@ -8,20 +12,37 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import cpabe.AbeOutputStream;
-import cpabe.AbePrivateKey;
-import cpabe.AbePublicKey;
-import cpabe.bsw07.Bsw07Polynomial;
-
 public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
-    private int                             threshold;
+    private int threshold;
     private ArrayList<Bsw07PolicyAbstractNode> children;
-    private ArrayList<Integer>              satl;
-    private Bsw07Polynomial                poly;
+    private ArrayList<Integer> satl;
+    private Bsw07Polynomial poly;
 
     public Bsw07PolicyParentNode(int threshold, int numberOfChildren) {
         this.threshold = threshold;
         children = new ArrayList<Bsw07PolicyAbstractNode>(numberOfChildren);
+    }
+
+    private static Element evalPoly(Bsw07Polynomial q, Element x) {
+        Element r = x.duplicate().setToZero();
+        Element t = x.duplicate().setToOne();
+        for (Element coeff : q.coef) {
+            r.add(coeff.duplicate().mul(t));
+            t.mul(x);
+        }
+        return r;
+    }
+
+    private static void lagrangeCoef(Element r, ArrayList<Integer> s, int i) {
+        Element t = r.duplicate();
+        r.setToOne();
+        for (Integer j : s) {
+            if (j == i) continue;
+            t.set(-j);
+            r.mul(t); /* num_muls++; */
+            t.set(i - j).invert();
+            r.mul(t); /* num_muls++; */
+        }
     }
 
     public boolean addChild(Bsw07PolicyAbstractNode child) {
@@ -35,9 +56,9 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     public int getThreshold() {
         return threshold;
     }
-    
+
     public List<Bsw07PolicyAbstractNode> getChildren() {
-    	return children;
+        return children;
     }
 
     @Override
@@ -57,16 +78,6 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
             Element t = evalPoly(poly, r);
             children.get(i).fillPolicy(pub, t);
         }
-    }
-
-    private static Element evalPoly(Bsw07Polynomial q, Element x) {
-        Element r = x.duplicate().setToZero();
-        Element t = x.duplicate().setToOne();
-        for (Element coeff : q.coef) {
-            r.add(coeff.duplicate().mul(t));
-            t.mul(x);
-        }
-        return r;
     }
 
     @Override
@@ -111,18 +122,6 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
             lagrangeCoef(t, satl, cur.intValue());
             Element expnew = exp.duplicate().mul(t);
             children.get(cur - 1).decFlattenSpecific(r, expnew, prv);
-        }
-    }
-
-    private static void lagrangeCoef(Element r, ArrayList<Integer> s, int i) {
-        Element t = r.duplicate();
-        r.setToOne();
-        for (Integer j : s) {
-            if (j == i) continue;
-            t.set(-j);
-            r.mul(t); /* num_muls++; */
-            t.set(i - j).invert();
-            r.mul(t); /* num_muls++; */
         }
     }
 

@@ -9,7 +9,7 @@ public class AbeEncryptionException extends GeneralSecurityException {
     public AbeEncryptionException(String msg) {
         super(msg);
     }
-    
+
     public AbeEncryptionException(String msg, Throwable t) {
         super(msg, t);
     }
