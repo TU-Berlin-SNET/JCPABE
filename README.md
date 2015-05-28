@@ -7,6 +7,8 @@ It started out as a fork of https://github.com/junwei-wang/cpabe but has since b
 
 It supports numerical attributes and an experimental form of area attributes.
 
+The main functionality is accessible in the cpabe.Cpabe class.
+
 This is research software and should not be used in application where actual security is required.
 
 #### Dependencies
