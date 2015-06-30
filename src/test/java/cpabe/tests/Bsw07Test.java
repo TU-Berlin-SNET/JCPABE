@@ -162,7 +162,7 @@ public class Bsw07Test {
     @Test
     @Repeat(5)
     public void numberTest() throws Exception {
-        long signedNumber = random.nextLong();
+        long signedNumber = new BigInteger(Util.FLEXINT_MAXBITS, random).longValue();
         BigInteger number = Util.unsignedToBigInteger(signedNumber); // when parsing we dont expect negative values
         System.out.println("Current Number: " + number);
         testComparisonOperations(number);
@@ -171,22 +171,22 @@ public class Bsw07Test {
     @Test
     public void specificNumberTest() throws Exception {
         testComparisonOperations(BigInteger.ONE);
-        testComparisonOperations(Util.MAX_UNSIGNED_LONG.subtract(BigInteger.valueOf(2))); // max Long - 2
+        testComparisonOperations(Util.MAX_FLEXINT_VALUE.subtract(BigInteger.valueOf(2)));
     }
 
     @Test(expected = AbeEncryptionException.class)
     public void zeroNumberTest() throws Exception {
-        testComparisonOperations(Util.MIN_UNSIGNED_LONG); // works for most operators, but fails at >= 0, since that is converted to > -1
+        testComparisonOperations(Util.MIN_FLEXINT_VALUE); // works for most operators, but fails at >= 0, since that is converted to > -1
     }
 
     @Test(expected = AbeEncryptionException.class)
     public void maxLongTest() throws Exception {
-        testComparisonOperations(Util.MAX_UNSIGNED_LONG);
+        testComparisonOperations(Util.MAX_FLEXINT_VALUE);
     }
 
     @Test(expected = AbeEncryptionException.class)
     public void notQuiteMaxLongTest() throws Exception {
-        testComparisonOperations(Util.MAX_UNSIGNED_LONG.subtract(BigInteger.ONE)); // works for most operators, but fails at <= maxLong - 1 since that is converted to < maxLong, which wont work
+        testComparisonOperations(Util.MAX_FLEXINT_VALUE.subtract(BigInteger.ONE)); // works for most operators, but fails at <= maxValue - 1 since that is converted to < maxValue, which wont work
     }
 
     public void testComparisonOperations(BigInteger number) throws Exception {
@@ -271,18 +271,4 @@ public class Bsw07Test {
         assertTrue(Arrays.equals(data, forceDecrypt(smKey, smallerEncrypted)));
         assertTrue(Arrays.equals(data, forceDecrypt(smKey, smallerEqEncrypted)));
     }
-
-    // @Test
-    // public void documentationTest() {
-    // double latitudeAttribute = 52.52001;
-    // double longitudeAttribute = 13.40495;
-    // System.out.printf("sourceLocation: %f,%f%n",latitudeAttribute,
-    // longitudeAttribute);
-    // GeoHash geb = GeoHash.withBitPrecision(latitudeAttribute,
-    // longitudeAttribute, 24);
-    // System.out.println("hash: "+geb.toBase32());
-    // GeoHash dec = GeoHash.fromGeohashString(geb.toBase32());
-    // PolicyParsing.printBoundingBox(geb.getBoundingBox());
-    //
-    // }
 }

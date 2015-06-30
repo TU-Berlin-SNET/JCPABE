@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class ConversionTest {
     public static BigInteger MAX_SIGNED_LONG = BigInteger.valueOf(Long.MAX_VALUE);
     private static SecureRandom random;
-    private final double epsilon = 1E-10;
+    private final double epsilon = Util.FLEXINT_MAXBITS > 32 ? 1E-10 : 1E-7;
     @Rule
     public RepeatRule repeatRule = new RepeatRule();
 
@@ -27,7 +27,7 @@ public class ConversionTest {
     @Test
     @Repeat(500)
     public void longToBigIntegerConversion() {
-        BigInteger testNumber = new BigInteger(64, random);
+        BigInteger testNumber = new BigInteger(Util.FLEXINT_MAXBITS, random);
         long numberAsLong = testNumber.longValue();
         BigInteger asBigInt = Util.unsignedToBigInteger(numberAsLong);
         if (testNumber.compareTo(MAX_SIGNED_LONG) > 0) {

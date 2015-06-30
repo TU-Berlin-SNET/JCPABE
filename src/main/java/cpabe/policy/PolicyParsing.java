@@ -10,6 +10,7 @@ public class PolicyParsing {
     private static final BigInteger BI_2_08 = BigInteger.ONE.shiftLeft(8);
     private static final BigInteger BI_2_04 = BigInteger.ONE.shiftLeft(4);
     private static final BigInteger BI_2_02 = BigInteger.ONE.shiftLeft(2);
+
     private static final boolean IS_GREATER = true;
     private static final boolean IS_SMALLER = !IS_GREATER;
 
@@ -99,7 +100,7 @@ public class PolicyParsing {
     }
 
     private static void handleNumericalAttribute(String name, boolean greaterThan, BigInteger number, StringBuffer retVal) throws ParseException {
-        if (number.compareTo(Util.MIN_UNSIGNED_LONG) < 0 || number.compareTo(Util.MAX_UNSIGNED_LONG) >= 0) {
+        if (number.compareTo(Util.MIN_FLEXINT_VALUE) < 0 || number.compareTo(Util.MAX_FLEXINT_VALUE) >= 0) {
             throw new ParseException("Only non-negative numbers until 2^64 - 1 are supported. Current number: " + number);
         }
 
@@ -133,7 +134,7 @@ public class PolicyParsing {
 
         // flexint_leader
         int numChildren = 0;
-        for (int k = 2; k <= 32; k *= 2) {
+        for (int k = 2; k <= Util.FLEXINT_MAXBITS/2; k *= 2) {
             BigInteger bi_2_k = BigInteger.ONE.shiftLeft(k);
             if (greaterThan && bi_2_k.compareTo(number) > 0) {
                 retVal.append(String.format("%s_ge_2^%02d ", name, k));

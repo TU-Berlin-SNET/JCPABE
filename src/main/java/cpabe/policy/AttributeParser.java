@@ -31,11 +31,11 @@ public class AttributeParser {
             throw new ParseException("The number for the attribute " + attribute + " is too high (" + number + ")");
         }
 
-        for (int i = 2; i <= 32; i *= 2) {
+        for (int i = 2; i <= Util.FLEXINT_MAXBITS/2; i *= 2) {
             attributes.add(String.format((Util.isLessThanUnsigned(value, (long) 1 << i) ? "%s_lt_2^%02d" : "%s_ge_2^%02d"), attribute, i));
         }
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < Util.FLEXINT_MAXBITS; i++) {
             attributes.add(Util.bit_marker_flexint(attribute, i, (((long) 1 << i) & value) != 0)); // alternatively unsignedLong.testBit(i)
         }
 
