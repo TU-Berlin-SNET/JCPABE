@@ -34,13 +34,7 @@ public class Util {
         for (int i = 0; i < maxBits; i++) {
             bitmarks.append('x');
         }
-        bitmarks.insert(maxBits - bit, on ? '1' : '0');
-
-        // delete leading x
-        // decreasing the maxBits in the loop by one would also fix this, but that leads to
-        // an out of bounds exception, when trying to insert with bit = 0.
-        bitmarks.deleteCharAt(0);
-
+        bitmarks.setCharAt(maxBits - bit - 1, on ? '1' : '0');
         return result.append(bitmarks).toString();
     }
 
