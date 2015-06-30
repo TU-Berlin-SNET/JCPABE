@@ -9,9 +9,6 @@ public class Util {
     public static final String FLEXINT_TYPE = "flexint";
     public static final int FLEXINT_MAXBITS = 64;
 
-    public static final String GEOHASH_TYPE = "geohash";
-    public static final int GEOHASH_MAXBITS = FLEXINT_MAXBITS;
-
     public static final BigInteger MIN_FLEXINT_VALUE = BigInteger.ZERO;
     public static final BigInteger MAX_FLEXINT_VALUE = BigInteger.ONE.shiftLeft(FLEXINT_MAXBITS).subtract(BigInteger.ONE);
     private static final BigDecimal MAX_FLEXINT_VALUE_DECIMAL = new BigDecimal(MAX_FLEXINT_VALUE);
@@ -28,10 +25,6 @@ public class Util {
 
     public static String bit_marker_flexint(String attribute, int bit, boolean on) {
         return bit_marker(attribute, FLEXINT_TYPE, FLEXINT_MAXBITS, bit, on);
-    }
-
-    public static String bit_marker_geohash(String attribute, int bit, boolean on) {
-        return bit_marker(attribute, GEOHASH_TYPE, GEOHASH_MAXBITS, bit, on);
     }
 
     private static String bit_marker(String attribute, String type, int maxBits, int bit, boolean on) {
