@@ -25,31 +25,22 @@ dependencies {
 
 compileJjtree {
     inputDirectory = file('src/main/jjtree/')
-    outputDirectory = file('generated/jjtree')
-    arguments = [grammar_encoding: 'UTF-8', static: 'false']
+    outputDirectory = file('generated/jjtree/cpabe/policyparser')
 }
 
 compileJavacc {
     inputDirectory = compileJjtree.outputDirectory
-    outputDirectory = file('generated/javacc')
-    arguments = [grammar_encoding: 'UTF-8', static: 'false']
+    outputDirectory = file('generated/javacc/cpabe/policyparser')
 }
 
 sourceSets {
     main {
         java {
-            srcDir compileJjtree.outputDirectory
-            srcDir compileJavacc.outputDirectory
+            srcDir file('generated/jjtree')
+            srcDir file('generated/javacc')
         }
     }
 }
-
-/* TODO: IntelliJ does not _really_ seem to recognize these sourcesets
-   they are added to the project structure, the classes are found, but only
-   the full classnames seem to be valid (cpabe.policyparser.SimpleNode
-   instead of just SimpleNode seems to be required, even though both
-   classes are in the same package)
- */
 
 clean {
     delete 'generated'
