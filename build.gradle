@@ -1,8 +1,8 @@
 plugins {
-    id "ca.coglinc.javacc" version "2.1.0"
+    id "ca.coglinc.javacc" version "2.3.1"
 }
 
-apply plugin: 'maven' //TODO necessary? is there like a local gradle repository?
+apply plugin: 'maven'
 apply plugin: 'java'
 
 group = "snet.abe"
@@ -20,38 +20,39 @@ dependencies {
     compile 'it.unisa.dia.gas:jpbc-api:2.0.0'
     compile 'it.unisa.dia.gas:jpbc-plaf:2.0.0'
     compile 'it.unisa.dia.gas:jpbc-pbc:2.0.0'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'junit:junit:4.12'
 }
 
 compileJjtree {
-    inputDirectory = file('src/main/resources/')
-    outputDirectory = file('src/gen/java/cpabe/policyparser/')
+    inputDirectory = file('src/main/jjtree/')
+    outputDirectory = file('generated/jjtree')
     arguments = [grammar_encoding: 'UTF-8', static: 'false']
 }
 
 compileJavacc {
     inputDirectory = compileJjtree.outputDirectory
-    outputDirectory = compileJjtree.outputDirectory
+    outputDirectory = file('generated/javacc')
+    arguments = [grammar_encoding: 'UTF-8', static: 'false']
 }
 
 sourceSets {
-    gen {
+    main {
         java {
-            srcDir 'src/gen/java'
+            srcDir compileJjtree.outputDirectory
+            srcDir compileJavacc.outputDirectory
         }
     }
 }
 
-// TODO: remove when javaccPlugin 2.1.1 addresses this issue
-task copyCustomAstClasses (type: Copy) {
-    from(compileJjtree.inputDirectory) {
-        include '*.java'
-    }
-    into compileJjtree.outputDirectory
+/* TODO: IntelliJ does not _really_ seem to recognize these sourcesets
+   they are added to the project structure, the classes are found, but only
+   the full classnames seem to be valid (cpabe.policyparser.SimpleNode
+   instead of just SimpleNode seems to be required, even though both
+   classes are in the same package)
+ */
+
+clean {
+    delete 'generated'
 }
-copyCustomAstClasses.outputs.dir 'src/gen'
-clean.dependsOn cleanCopyCustomAstClasses
 
-compileJjtree.dependsOn copyCustomAstClasses
 
-//TODO: is there a way to generate the parser in a "source generation" step so that intellij wont complain?
