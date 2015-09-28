@@ -148,11 +148,11 @@ public class PolicyParsing {
         int minSatisfyLeader = greaterThan ? 1 : numChildren;
         if (numChildren != 0) {
             // also part of flexint_leader
-            retVal.append(minSatisfyLeader + "of" + numChildren);
-            retVal.append(' ');
+            if (!(minSatisfyLeader == 1 && numChildren == 1))
+                retVal.append(minSatisfyLeader).append("of").append(numChildren).append(' ');
 
             // p = kof2_policy(gt ? 1 : 2, l, p);
-            retVal.append((greaterThan ? 1 : 2) + "of2 ");
+            retVal.append(greaterThan ? 1 : 2).append("of2 ");
         }
 
         // delete trailing space

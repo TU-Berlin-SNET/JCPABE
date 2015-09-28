@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class ConversionTest {
     public static BigInteger MAX_SIGNED_LONG = BigInteger.valueOf(Long.MAX_VALUE);
     private static SecureRandom random;
-    private final double epsilon = Util.FLEXINT_MAXBITS > 32 ? 1E-10 : 1E-7;
+    private final double epsilon = Util.FLEXINT_MAXBITS == 64 ? 1E-10 : (Util.FLEXINT_MAXBITS == 32 ? 1E-7 : 1E-2); //TODO calculate bound for 16 bits
     @Rule
     public RepeatRule repeatRule = new RepeatRule();
 
@@ -48,6 +48,7 @@ public class ConversionTest {
         long asLong = Util.convertLatitudeToLong(latitude).longValue();
         double asDouble = Util.convertLongToLatitude(asLong);
         if (Math.abs(latitude - asDouble) >= epsilon) {
+            System.out.printf("Latitude: %f%n", latitude);
             System.out.println("diff:" + (latitude - asDouble));
         }
         assertTrue(Math.abs(latitude - asDouble) < epsilon);
@@ -62,6 +63,7 @@ public class ConversionTest {
         long asLong = Util.convertLongitudeToLong(longitude).longValue();
         double asDouble = Util.convertLongToLongitude(asLong);
         if (Math.abs(longitude - asDouble) >= epsilon) {
+            System.out.printf("Longitude: %f%n", longitude);
             System.out.println("diff:" + (longitude - asDouble));
         }
         assertTrue(Math.abs(longitude - asDouble) < epsilon);

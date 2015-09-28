@@ -46,7 +46,7 @@ public abstract class Bsw07PolicyAbstractNode {
                 } else if (threshold > numChildren) {
                     throw new AbeEncryptionException("error parsing " + s + ": unsatisfiable operator " + curToken);
                 } else if (numChildren == 1) {
-                    throw new AbeEncryptionException("error parsing " + s + ": indentity operator " + curToken);
+                    System.err.println("error parsing " + s + ": redundant operator " + curToken);
                 } else if (numChildren > stack.size()) {
                     throw new AbeEncryptionException("error parsing " + s + ": stack underflow at " + curToken);
                 }
