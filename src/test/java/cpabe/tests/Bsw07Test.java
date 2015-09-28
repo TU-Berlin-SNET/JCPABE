@@ -8,6 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -60,23 +62,11 @@ public class Bsw07Test {
         String policy1 = "(att1 and att2) or att3";
         String policy2 = "att3 or att4 >= 5";
 
-        AbeEncrypted policy1EncryptedTest1 = Cpabe.encrypt(pubKey, policy1, data);
-        AbeEncrypted policy2EncryptedTest1 = Cpabe.encrypt(pubKey, policy2, data);
+        AbeEncrypted policy1EncryptedTest = Cpabe.encrypt(pubKey, policy1, data);
+        AbeEncrypted policy2EncryptedTest = Cpabe.encrypt(pubKey, policy2, data);
 
-        AbeEncrypted policy1EncryptedTest2 = Cpabe.encrypt(pubKey, policy1, data);
-        AbeEncrypted policy2EncryptedTest2 = Cpabe.encrypt(pubKey, policy2, data);
-
-        AbeEncrypted policy1EncryptedTest3 = Cpabe.encrypt(pubKey, policy1, data);
-        AbeEncrypted policy2EncryptedTest3 = Cpabe.encrypt(pubKey, policy2, data);
-
-        AbeEncrypted policy1EncryptedTest4 = Cpabe.encrypt(pubKey, policy1, data);
-        AbeEncrypted policy2EncryptedTest4 = Cpabe.encrypt(pubKey, policy2, data);
-
-        AbeEncrypted policy1EncryptedTest5 = Cpabe.encrypt(pubKey, policy1, data);
-        AbeEncrypted policy2EncryptedTest5 = Cpabe.encrypt(pubKey, policy2, data);
-
-        AbeEncrypted policy1EncryptedTest6 = Cpabe.encrypt(pubKey, policy1, data);
-        AbeEncrypted policy2EncryptedTest6 = Cpabe.encrypt(pubKey, policy2, data);
+        ByteArrayInputStream baisPolicy1 = TUtil.getReusableStream(policy1EncryptedTest, pubKey);
+        ByteArrayInputStream baisPolicy2 = TUtil.getReusableStream(policy2EncryptedTest, pubKey);
 
         String att1att2Attribute = "att1 att2";
         String att3att4Attribute = "att3 att4 = 42";
@@ -84,28 +74,34 @@ public class Bsw07Test {
         AbePrivateKey att1att2Key = Cpabe.keygen(smKey, att1att2Attribute);
         AbePrivateKey att3att4Key = Cpabe.keygen(smKey, att3att4Attribute);
 
-        assertTrue(Arrays.equals(data, decrypt(att1att2Key, policy1EncryptedTest1)));
-        assertFalse(Arrays.equals(data, decrypt(att1att2Key, policy2EncryptedTest1)));
+        assertTrue(Arrays.equals(data, decrypt(att1att2Key, AbeEncrypted.readFromStream(pubKey, baisPolicy1))));
+        assertFalse(Arrays.equals(data, decrypt(att1att2Key, AbeEncrypted.readFromStream(pubKey, baisPolicy2))));
+        TUtil.resetStreams(baisPolicy1, baisPolicy2);
 
-        assertTrue(Arrays.equals(data, decrypt(att3att4Key, policy1EncryptedTest2)));
-        assertTrue(Arrays.equals(data, decrypt(att3att4Key, policy2EncryptedTest2)));
+        assertTrue(Arrays.equals(data, decrypt(att3att4Key, AbeEncrypted.readFromStream(pubKey, baisPolicy1))));
+        assertTrue(Arrays.equals(data, decrypt(att3att4Key, AbeEncrypted.readFromStream(pubKey, baisPolicy2))));
+        TUtil.resetStreams(baisPolicy1, baisPolicy2);
 
         AbePrivateKey att1Key = Cpabe.delegate(att1att2Key, "att1");
         AbePrivateKey att2Key = Cpabe.delegate(att1att2Key, "att2");
         AbePrivateKey att3Key = Cpabe.delegate(att3att4Key, "att3");
         AbePrivateKey att4Key = Cpabe.delegate(att3att4Key, "att4 = 42");
 
-        assertFalse(Arrays.equals(data, decrypt(att1Key, policy1EncryptedTest3)));
-        assertFalse(Arrays.equals(data, decrypt(att1Key, policy2EncryptedTest3)));
+        assertFalse(Arrays.equals(data, decrypt(att1Key, AbeEncrypted.readFromStream(pubKey, baisPolicy1))));
+        assertFalse(Arrays.equals(data, decrypt(att1Key, AbeEncrypted.readFromStream(pubKey, baisPolicy2))));
+        TUtil.resetStreams(baisPolicy1, baisPolicy2);
 
-        assertFalse(Arrays.equals(data, decrypt(att2Key, policy1EncryptedTest4)));
-        assertFalse(Arrays.equals(data, decrypt(att2Key, policy2EncryptedTest4)));
+        assertFalse(Arrays.equals(data, decrypt(att2Key, AbeEncrypted.readFromStream(pubKey, baisPolicy1))));
+        assertFalse(Arrays.equals(data, decrypt(att2Key, AbeEncrypted.readFromStream(pubKey, baisPolicy2))));
+        TUtil.resetStreams(baisPolicy1, baisPolicy2);
 
-        assertTrue(Arrays.equals(data, decrypt(att3Key, policy1EncryptedTest5)));
-        assertTrue(Arrays.equals(data, decrypt(att3Key, policy2EncryptedTest5)));
+        assertTrue(Arrays.equals(data, decrypt(att3Key, AbeEncrypted.readFromStream(pubKey, baisPolicy1))));
+        assertTrue(Arrays.equals(data, decrypt(att3Key, AbeEncrypted.readFromStream(pubKey, baisPolicy2))));
+        TUtil.resetStreams(baisPolicy1, baisPolicy2);
 
-        assertFalse(Arrays.equals(data, decrypt(att4Key, policy1EncryptedTest6)));
-        assertTrue(Arrays.equals(data, decrypt(att4Key, policy2EncryptedTest6)));
+        assertFalse(Arrays.equals(data, decrypt(att4Key, AbeEncrypted.readFromStream(pubKey, baisPolicy1))));
+        assertTrue(Arrays.equals(data, decrypt(att4Key, AbeEncrypted.readFromStream(pubKey, baisPolicy2))));
+        TUtil.resetStreams(baisPolicy1, baisPolicy2);
     }
 
     @Test
@@ -201,23 +197,17 @@ public class Bsw07Test {
         String equalPolicy = "someNumber = " + number;
 
         // each AbeEncrypted can only be decrypted once, since we advance the stream to after the AES data.
-        AbeEncrypted greaterEncryptedTest1 = Cpabe.encrypt(publicKey, greaterPolicy, data);
-        AbeEncrypted greaterEqEncryptedTest1 = Cpabe.encrypt(publicKey, greaterEqPolicy, data);
-        AbeEncrypted smallerEncryptedTest1 = Cpabe.encrypt(publicKey, smallerPolicy, data);
-        AbeEncrypted smallerEqEncryptedTest1 = Cpabe.encrypt(publicKey, smallerEqPolicy, data);
-        AbeEncrypted equalEncryptedTest1 = Cpabe.encrypt(publicKey, equalPolicy, data);
+        AbeEncrypted greaterEncryptedTest = Cpabe.encrypt(publicKey, greaterPolicy, data);
+        AbeEncrypted greaterEqEncryptedTest = Cpabe.encrypt(publicKey, greaterEqPolicy, data);
+        AbeEncrypted smallerEncryptedTest = Cpabe.encrypt(publicKey, smallerPolicy, data);
+        AbeEncrypted smallerEqEncryptedTest = Cpabe.encrypt(publicKey, smallerEqPolicy, data);
+        AbeEncrypted equalEncryptedTest = Cpabe.encrypt(publicKey, equalPolicy, data);
 
-        AbeEncrypted greaterEncryptedTest2 = Cpabe.encrypt(publicKey, greaterPolicy, data);
-        AbeEncrypted greaterEqEncryptedTest2 = Cpabe.encrypt(publicKey, greaterEqPolicy, data);
-        AbeEncrypted smallerEncryptedTest2 = Cpabe.encrypt(publicKey, smallerPolicy, data);
-        AbeEncrypted smallerEqEncryptedTest2 = Cpabe.encrypt(publicKey, smallerEqPolicy, data);
-        AbeEncrypted equalEncryptedTest2 = Cpabe.encrypt(publicKey, equalPolicy, data);
-
-        AbeEncrypted greaterEncryptedTest3 = Cpabe.encrypt(publicKey, greaterPolicy, data);
-        AbeEncrypted greaterEqEncryptedTest3 = Cpabe.encrypt(publicKey, greaterEqPolicy, data);
-        AbeEncrypted smallerEncryptedTest3 = Cpabe.encrypt(publicKey, smallerPolicy, data);
-        AbeEncrypted smallerEqEncryptedTest3 = Cpabe.encrypt(publicKey, smallerEqPolicy, data);
-        AbeEncrypted equalEncryptedTest3 = Cpabe.encrypt(publicKey, equalPolicy, data);
+        ByteArrayInputStream baisGreater = TUtil.getReusableStream(greaterEncryptedTest, publicKey);
+        ByteArrayInputStream baisGreaterEq = TUtil.getReusableStream(greaterEqEncryptedTest, publicKey);
+        ByteArrayInputStream baisSmaller = TUtil.getReusableStream(smallerEncryptedTest, publicKey);
+        ByteArrayInputStream baisSmallerEq = TUtil.getReusableStream(smallerEqEncryptedTest, publicKey);
+        ByteArrayInputStream baisEqual = TUtil.getReusableStream(equalEncryptedTest, publicKey);
 
         String greaterAttribute = "someNumber = " + number.add(BigInteger.ONE);
         String smallerAttribute = "someNumber = " + number.subtract(BigInteger.ONE);
@@ -228,25 +218,28 @@ public class Bsw07Test {
         AbePrivateKey equalKey = Cpabe.keygen(secretKey, equalAttribute);
 
         // greaterKey
-        assertTrue(Arrays.equals(data, decrypt(greaterKey, greaterEncryptedTest1)));
-        assertTrue(Arrays.equals(data, decrypt(greaterKey, greaterEqEncryptedTest1)));
-        assertFalse(Arrays.equals(data, decrypt(greaterKey, smallerEncryptedTest1)));
-        assertFalse(Arrays.equals(data, decrypt(greaterKey, smallerEqEncryptedTest1)));
-        assertFalse(Arrays.equals(data, decrypt(greaterKey, equalEncryptedTest1)));
+        assertTrue(Arrays.equals(data, decrypt(greaterKey, AbeEncrypted.readFromStream(publicKey, baisGreater))));
+        assertTrue(Arrays.equals(data, decrypt(greaterKey, AbeEncrypted.readFromStream(publicKey, baisGreaterEq))));
+        assertFalse(Arrays.equals(data, decrypt(greaterKey, AbeEncrypted.readFromStream(publicKey, baisSmaller))));
+        assertFalse(Arrays.equals(data, decrypt(greaterKey, AbeEncrypted.readFromStream(publicKey, baisSmallerEq))));
+        assertFalse(Arrays.equals(data, decrypt(greaterKey, AbeEncrypted.readFromStream(publicKey, baisEqual))));
+        TUtil.resetStreams(baisGreater, baisGreaterEq, baisSmaller, baisSmallerEq, baisEqual);
 
         // smallerKey
-        assertFalse(Arrays.equals(data, decrypt(smallerKey, greaterEncryptedTest2)));
-        assertFalse(Arrays.equals(data, decrypt(smallerKey, greaterEqEncryptedTest2)));
-        assertTrue(Arrays.equals(data, decrypt(smallerKey, smallerEncryptedTest2)));
-        assertTrue(Arrays.equals(data, decrypt(smallerKey, smallerEqEncryptedTest2)));
-        assertFalse(Arrays.equals(data, decrypt(smallerKey, equalEncryptedTest2)));
+        assertFalse(Arrays.equals(data, decrypt(smallerKey, AbeEncrypted.readFromStream(publicKey, baisGreater))));
+        assertFalse(Arrays.equals(data, decrypt(smallerKey, AbeEncrypted.readFromStream(publicKey, baisGreaterEq))));
+        assertTrue(Arrays.equals(data, decrypt(smallerKey, AbeEncrypted.readFromStream(publicKey, baisSmaller))));
+        assertTrue(Arrays.equals(data, decrypt(smallerKey, AbeEncrypted.readFromStream(publicKey, baisSmallerEq))));
+        assertFalse(Arrays.equals(data, decrypt(smallerKey, AbeEncrypted.readFromStream(publicKey, baisEqual))));
+        TUtil.resetStreams(baisGreater, baisGreaterEq, baisSmaller, baisSmallerEq, baisEqual);
 
         // equalKey
-        assertFalse(Arrays.equals(data, decrypt(equalKey, greaterEncryptedTest3)));
-        assertTrue(Arrays.equals(data, decrypt(equalKey, greaterEqEncryptedTest3)));
-        assertFalse(Arrays.equals(data, decrypt(equalKey, smallerEncryptedTest3)));
-        assertTrue(Arrays.equals(data, decrypt(equalKey, smallerEqEncryptedTest3)));
-        assertTrue(Arrays.equals(data, decrypt(equalKey, equalEncryptedTest3)));
+        assertFalse(Arrays.equals(data, decrypt(equalKey, AbeEncrypted.readFromStream(publicKey, baisGreater))));
+        assertTrue(Arrays.equals(data, decrypt(equalKey, AbeEncrypted.readFromStream(publicKey, baisGreaterEq))));
+        assertFalse(Arrays.equals(data, decrypt(equalKey, AbeEncrypted.readFromStream(publicKey, baisSmaller))));
+        assertTrue(Arrays.equals(data, decrypt(equalKey, AbeEncrypted.readFromStream(publicKey, baisSmallerEq))));
+        assertTrue(Arrays.equals(data, decrypt(equalKey, AbeEncrypted.readFromStream(publicKey, baisEqual))));
+        TUtil.resetStreams(baisGreater, baisGreaterEq, baisSmaller, baisSmallerEq, baisEqual);
     }
 
     @Test
