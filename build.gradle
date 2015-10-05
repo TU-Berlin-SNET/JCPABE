@@ -2,6 +2,7 @@ plugins {
     id 'maven'
     id 'java'
     id 'ca.coglinc.javacc' version '2.3.1'
+    id 'com.github.ben-manes.versions' version '0.11.3'
 }
 
 repositories {
