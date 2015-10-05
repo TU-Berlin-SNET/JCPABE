@@ -28,6 +28,7 @@ public class Util {
     }
 
     private static String bit_marker(String attribute, String type, int maxBits, int bit, boolean on) {
+        if (bit >= maxBits) throw new RuntimeException("bit is greater than maxbits");
         StringBuilder result = new StringBuilder(attribute.length() + maxBits + type.length() + 2);
         StringBuilder bitmarks = new StringBuilder(maxBits + 1);
         result.append(attribute).append('_').append(type).append('_');

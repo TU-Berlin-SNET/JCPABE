@@ -29,12 +29,6 @@ public class Bsw07Test {
         random = new SecureRandom();
     }
 
-    public byte[] getRandomData() {
-        byte[] data = new byte[random.nextInt(100) + 20];
-        random.nextBytes(data);
-        return data;
-    }
-
     // so we dont need to check for exceptions every time we want to decrypt
     private byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData) {
         try {
@@ -57,7 +51,7 @@ public class Bsw07Test {
         AbeSecretMasterKey smKey = Cpabe.setup();
         AbePublicKey pubKey = smKey.getPublicKey();
 
-        byte[] data = getRandomData();
+        byte[] data = TUtil.getRandomData();
 
         String policy1 = "(att1 and att2) or att3";
         String policy2 = "att3 or att4 >= 5";
@@ -109,7 +103,7 @@ public class Bsw07Test {
         AbeSecretMasterKey smKey = Cpabe.setup();
         AbePublicKey pubKey = smKey.getPublicKey();
 
-        byte[] data = getRandomData();
+        byte[] data = TUtil.getRandomData();
 
         String policy1 = "(att1 and att2) or att3";
         String policy2 = "att3 or att4 >= 5";
@@ -187,7 +181,7 @@ public class Bsw07Test {
 
     public void testComparisonOperations(BigInteger number) throws Exception {
         AbeSecretMasterKey secretKey = Cpabe.setup();
-        byte[] data = getRandomData();
+        byte[] data = TUtil.getRandomData();
         AbePublicKey publicKey = secretKey.getPublicKey();
 
         String greaterPolicy = "someNumber > " + number;
@@ -247,7 +241,7 @@ public class Bsw07Test {
         AbeSecretMasterKey smKey = Cpabe.setup();
         AbePublicKey pubKey = smKey.getPublicKey();
 
-        byte[] data = getRandomData();
+        byte[] data = TUtil.getRandomData();
         int number = random.nextInt(100) + 20; // 20-119
         String greaterPolicy = "someNumber > " + number;
         String greaterEqPolicy = "someNumber >= " + number;

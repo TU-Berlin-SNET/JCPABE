@@ -33,10 +33,10 @@ public class Cpabe {
         return Bsw07.setup();
     }
 
-    public static void setup(File publicMasterFile, File secretMasterFile) throws IOException {
+    public static void setup(File publicKeyFile, File secretMasterFile) throws IOException {
         AbeSecretMasterKey masterKey = setup();
         masterKey.writeToFile(secretMasterFile);
-        masterKey.getPublicKey().writeToFile(publicMasterFile);
+        masterKey.getPublicKey().writeToFile(publicKeyFile);
     }
 
     public static AbePrivateKey keygen(AbeSecretMasterKey secretMaster, String attributes) throws ParseException {
@@ -157,13 +157,14 @@ public class Cpabe {
      * Returns true if the given privateKey is able to decrypt the cipher of the given File, false otherwise.
      *
      * @param privateKey
-     * @param is         the input stream of the file
+     * @param encryptedFile     the encrypted file to test
      * @return true if the privatekey is able to decrypt the cipher
      * @throws IOException
      */
-    public static boolean canDecrypt(AbePrivateKey privateKey, File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
-        AbeEncrypted encrypted = AbeEncrypted.readFromStream(privateKey.getPublicKey(), fis);
-        return Bsw07.canDecrypt(privateKey, encrypted.getCipher());
+    public static boolean canDecrypt(AbePrivateKey privateKey, File encryptedFile) throws IOException {
+        try (FileInputStream fis = new FileInputStream(encryptedFile)) {
+            AbeEncrypted encrypted = AbeEncrypted.readFromStream(privateKey.getPublicKey(), fis);
+            return Bsw07.canDecrypt(privateKey, encrypted.getCipher());
+        }
     }
 }
