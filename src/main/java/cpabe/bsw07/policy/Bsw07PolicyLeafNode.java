@@ -24,6 +24,8 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
      **/
     private Element cp;
 
+    private Boolean isSatisfied = null;
+
     protected Bsw07PolicyLeafNode(Element hashedAttribute, Element c, Element cp) {
         this(hashedAttribute);
         this.c = c;
@@ -62,9 +64,12 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
     }
 
     @Override
-    protected boolean checkSatisfySpecific(AbePrivateKey prv) {
-        satisfyingComponent = prv.getSatisfyingComponent(getHashedAttribute());
-        return satisfyingComponent != null;
+    public boolean isSatisfiable(AbePrivateKey prv) {
+        if (isSatisfied == null) {
+            satisfyingComponent = prv.getSatisfyingComponent(getHashedAttribute());
+            isSatisfied = satisfyingComponent != null;
+        }
+        return isSatisfied;
     }
 
     @Override
@@ -76,7 +81,7 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
     protected void decFlattenSpecific(Element r, Element exp, AbePrivateKey prv) {
         Element t = prv.getPublicKey().getPairing().pairing(cp, satisfyingComponent.dp).invert(); /* num_pairings++; */
         Element s = prv.getPublicKey().getPairing().pairing(c, satisfyingComponent.d).mul(t).powZn(exp); 
-        /* num_pairings++num_muls++ num_exps++ */
+        /* num_pairings++ num_muls++ num_exps++ */
         r.mul(s); /* num_muls++; */
     }
 }

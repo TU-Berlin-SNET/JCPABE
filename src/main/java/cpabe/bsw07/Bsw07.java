@@ -143,7 +143,7 @@ public class Bsw07 {
     }
 
     public static boolean canDecrypt(AbePrivateKey prv, Bsw07Cipher cph) {
-        return cph.policyTree.checkSatisfy(prv);
+        return cph.policyTree.isSatisfiable(prv);
     }
 
     public static ArrayList<Bsw07PrivateKeyComponent> generateAdditionalAttributes(AbeSecretMasterKey msk, Element priv_d, List<Element> newHashedAttributes) {

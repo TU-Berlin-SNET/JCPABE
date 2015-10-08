@@ -1,5 +1,6 @@
 package cpabe.bsw07.policy;
 
+import cpabe.AbeDecryptionException;
 import cpabe.AbeOutputStream;
 import cpabe.AbePrivateKey;
 import cpabe.AbePublicKey;
@@ -17,10 +18,11 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     private ArrayList<Bsw07PolicyAbstractNode> children;
     private ArrayList<Integer> satl;
     private Bsw07Polynomial poly;
+    private Integer satisfiableChildrenCount = null;
 
     public Bsw07PolicyParentNode(int threshold, int numberOfChildren) {
         this.threshold = threshold;
-        children = new ArrayList<Bsw07PolicyAbstractNode>(numberOfChildren);
+        children = new ArrayList<>(numberOfChildren);
     }
 
     private static Element evalPoly(Bsw07Polynomial q, Element x) {
@@ -81,36 +83,38 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     }
 
     @Override
-    protected boolean checkSatisfySpecific(AbePrivateKey prv) {
-        boolean canSatisfy = false;
-        int cnt = 0;
-        for (Bsw07PolicyAbstractNode child : children)
-            if (child.checkSatisfy(prv)) cnt++;
-        if (cnt >= getThreshold()) canSatisfy = true;
-        return canSatisfy;
+    public boolean isSatisfiable(AbePrivateKey prv) {
+        if (satisfiableChildrenCount == null) {
+            int cnt = 0;
+            for (Bsw07PolicyAbstractNode child : children)
+                if (child.isSatisfiable(prv)) cnt++;
+            satisfiableChildrenCount = cnt;
+        }
+        return satisfiableChildrenCount >= getThreshold();
     }
 
     @Override
-    public void pickSatisfyMinLeaves(AbePrivateKey prv) {
+    public void pickSatisfyMinLeaves(AbePrivateKey prv) throws AbeDecryptionException {
         for (Bsw07PolicyAbstractNode child : children)
-            if (child.satisfiable) child.pickSatisfyMinLeaves(prv);
+            if (child.isSatisfiable(prv)) child.pickSatisfyMinLeaves(prv);
 
         int len = children.size();
-        ArrayList<Integer> c = new ArrayList<Integer>(len);
+        ArrayList<Integer> c = new ArrayList<>(len);
         for (int i = 0; i < len; i++)
-            c.add(new Integer(i));
+            c.add(i);
         Collections.sort(c, new IntegerComparator(this));
 
-        satl = new ArrayList<Integer>();
+
+        satl = new ArrayList<>();
         minLeaves = 0;
         int l = 0;
         for (int i = 0; i < len && l < getThreshold(); i++) {
-            int c_i = c.get(i).intValue(); /* c[i] */
+            int c_i = c.get(i); /* c[i] */
             Bsw07PolicyAbstractNode curChild = children.get(c_i);
-            if (curChild.satisfiable) {
+            if (curChild.isSatisfiable(prv)) {
                 l++;
                 minLeaves += curChild.minLeaves;
-                satl.add(new Integer(c_i + 1));
+                satl.add(c_i + 1);
             }
         }
     }
@@ -119,7 +123,7 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     protected void decFlattenSpecific(Element r, Element exp, AbePrivateKey prv) {
         Element t = prv.getPublicKey().getPairing().getZr().newElement();
         for (Integer cur : satl) {
-            lagrangeCoef(t, satl, cur.intValue());
+            lagrangeCoef(t, satl, cur);
             Element expnew = exp.duplicate().mul(t);
             children.get(cur - 1).decFlattenSpecific(r, expnew, prv);
         }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class Bsw07PolicyAbstractNode {
-    protected boolean satisfiable;
     protected int minLeaves;
 
     public static Bsw07PolicyAbstractNode readFromStream(AbeInputStream stream) throws IOException {
@@ -74,14 +73,9 @@ public abstract class Bsw07PolicyAbstractNode {
 
     public abstract void fillPolicy(AbePublicKey pub, Element e);
 
-    protected abstract boolean checkSatisfySpecific(AbePrivateKey prv);
+    public abstract boolean isSatisfiable(AbePrivateKey prv);
 
-    public boolean checkSatisfy(AbePrivateKey prv) {
-        satisfiable = checkSatisfySpecific(prv);
-        return satisfiable;
-    }
-
-    public abstract void pickSatisfyMinLeaves(AbePrivateKey prv);
+    public abstract void pickSatisfyMinLeaves(AbePrivateKey prv) throws AbeDecryptionException;
 
     protected abstract void decFlattenSpecific(Element r, Element one, AbePrivateKey prv);
 

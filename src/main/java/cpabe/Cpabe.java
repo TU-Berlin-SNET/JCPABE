@@ -24,7 +24,6 @@ public class Cpabe {
         }
         PairingFactory.getInstance().setUsePBCWhenPossible(true);
         if (!PairingFactory.getInstance().isPBCAvailable()) {
-            PairingFactory.getInstance().isPBCAvailable();
             Logger.getLogger(Cpabe.class.toString()).log(Level.SEVERE, "The jpbc-pbc library was loaded, but can not be used. JCPABE will be extremely slow.");
         }
     }
