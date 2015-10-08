@@ -14,9 +14,7 @@ public class Bsw07Util {
             byte[] digest = sha1.digest(s.getBytes());
             return publicKey.getPairing().getG2().newElementFromHash(digest, 0, digest.length);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            System.exit(1);
+            throw new RuntimeException("Hashing Alogrithm not available: " + AbeSettings.ELEMENT_HASHING_ALGORITHM, e);
         }
-        return null;
     }
 }

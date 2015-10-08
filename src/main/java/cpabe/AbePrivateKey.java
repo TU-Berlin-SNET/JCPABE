@@ -39,10 +39,7 @@ public class AbePrivateKey {
         ArrayList<Bsw07PrivateKeyComponent> components = new ArrayList<Bsw07PrivateKeyComponent>(compsLength);
 
         for (int i = 0; i < compsLength; i++) {
-            Element hashedAttribute = abeStream.readElement();
-            Element comp_d = abeStream.readElement();
-            Element comp_dp = abeStream.readElement();
-            components.add(new Bsw07PrivateKeyComponent(hashedAttribute, comp_d, comp_dp));
+            components.add(Bsw07PrivateKeyComponent.readFromStream(abeStream));
         }
         return new AbePrivateKey(d, components, pubKey);
     }
@@ -93,11 +90,8 @@ public class AbePrivateKey {
         abeStream.writeElement(d);
         int compsLength = components.size();
         abeStream.writeInt(compsLength);
-        for (int i = 0; i < compsLength; i++) {
-            Bsw07PrivateKeyComponent cur = components.get(i);
-            abeStream.writeElement(cur.hashedAttribute);
-            abeStream.writeElement(cur.d);
-            abeStream.writeElement(cur.dp);
+        for (Bsw07PrivateKeyComponent component : components) {
+            component.writeToStream(abeStream);
         }
     }
 

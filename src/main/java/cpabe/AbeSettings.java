@@ -16,7 +16,7 @@ public class AbeSettings {
             + "r 730750818665451621361119245571504901405976559617\n" + "exp2 159\n" + "exp1 107\n"
             + "sign1 1\n" + "sign0 1\n";
 
-    public static final String getCurrentTime() {
+    public static String getCurrentTime() {
         return AbeSettings.defaultDateFormat.format(Calendar.getInstance().getTime());
     }
 }

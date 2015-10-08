@@ -6,6 +6,8 @@ import it.unisa.dia.gas.jpbc.Element;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class Bsw07PolicyAbstractNode {
     protected int minLeaves;
@@ -28,17 +30,20 @@ public abstract class Bsw07PolicyAbstractNode {
         }
     }
 
+    private static final String of = "([0-9]+)of([0-9]+)";
+    private static final Pattern ofPattern = Pattern.compile(of);
+
     public static Bsw07PolicyAbstractNode parsePolicy(String s, AbePublicKey publicKey) throws AbeEncryptionException {
         ArrayList<Bsw07PolicyAbstractNode> stack = new ArrayList<Bsw07PolicyAbstractNode>();
         String[] toks = s.split("\\s+");
         for (int index = 0; index < toks.length; index++) {
             String curToken = toks[index];
-            if (!curToken.contains("of")) {
+            Matcher matcher = ofPattern.matcher(curToken);
+            if (!matcher.matches()) {
                 stack.add(new Bsw07PolicyLeafNode(curToken, publicKey));
             } else {
-                String[] k_n = curToken.split("of"); /* parse kofn node */
-                int threshold = Integer.parseInt(k_n[0]);
-                int numChildren = Integer.parseInt(k_n[1]);
+                int threshold = Integer.parseInt(matcher.group(1));
+                int numChildren = Integer.parseInt(matcher.group(2));
 
                 if (threshold < 1) {
                     throw new AbeEncryptionException("error parsing " + s + ": trivially satisfied operator " + curToken);

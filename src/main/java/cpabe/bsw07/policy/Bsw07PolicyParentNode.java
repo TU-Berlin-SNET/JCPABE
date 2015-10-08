@@ -143,4 +143,9 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
             return k < l ? -1 : (k == l ? 0 : 1);
         }
     }
+
+    @Override
+    public String toString() {
+        return satisfiableChildrenCount + " of " + threshold;
+    }
 }
