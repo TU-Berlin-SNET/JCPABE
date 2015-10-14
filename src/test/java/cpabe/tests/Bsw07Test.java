@@ -152,8 +152,7 @@ public class Bsw07Test {
     @Test
     @Repeat(5)
     public void numberTest() throws Exception {
-        long signedNumber = new BigInteger(Util.FLEXINT_MAXBITS, random).longValue();
-        BigInteger number = Util.unsignedToBigInteger(signedNumber); // when parsing we dont expect negative values
+        BigInteger number = new BigInteger(Util.FLEXINT_MAXBITS, random);
         System.out.println("Current Number: " + number);
         testComparisonOperations(number);
     }

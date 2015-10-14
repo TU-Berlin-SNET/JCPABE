@@ -22,24 +22,23 @@ public class AttributeParser {
     private final static Pattern AreaAttributePattern = Pattern.compile(name + "~" + numberDouble + "~" + numberDouble);
     private static NumberFormat numberFormat = DecimalFormat.getInstance(Locale.ENGLISH);
 
-    private static StringBuffer getNumericalAttributeResult(String attribute, String number) throws ParseException {
-        ArrayList<String> attributes = new ArrayList<String>();
-        BigInteger unsignedLong = new BigInteger(number);
-        Long value = unsignedLong.longValue();
+    private static StringBuffer getNumericalAttributeResult(String attribute, String digits) throws ParseException {
+        ArrayList<String> attributes = new ArrayList<>();
+        BigInteger number = new BigInteger(digits);
 
-        if (unsignedLong.compareTo(Util.unsignedToBigInteger(value)) != 0) {
-            throw new ParseException("The number for the attribute " + attribute + " is too high (" + number + ")");
+        if (!Util.inRange(number)) {
+            throw new ParseException("The number for the attribute " + attribute + " is too high (" + digits + ")");
         }
 
         for (int i = 2; i <= Util.FLEXINT_MAXBITS/2; i *= 2) {
-            attributes.add(String.format((Util.isLessThanUnsigned(value, (long) 1 << i) ? "%s_lt_2^%02d" : "%s_ge_2^%02d"), attribute, i));
+            attributes.add(String.format((number.compareTo(BigInteger.ONE.shiftLeft(i)) < 0 ? "%s_lt_2^%02d" : "%s_ge_2^%02d"), attribute, i));
         }
 
         for (int i = 0; i < Util.FLEXINT_MAXBITS; i++) {
-            attributes.add(Util.bit_marker_flexint(attribute, i, (((long) 1 << i) & value) != 0)); // alternatively unsignedLong.testBit(i)
+            attributes.add(Util.bit_marker_flexint(attribute, i, number.testBit(i))); // alternatively unsignedLong.testBit(i)
         }
 
-        attributes.add(String.format("%s_%s_%d", attribute, Util.FLEXINT_TYPE, Util.unsignedToBigInteger(value)));
+        attributes.add(String.format("%s_%s_%d", attribute, Util.FLEXINT_TYPE, number));
 
         StringBuffer result = new StringBuffer();
         for (String s : attributes) {
