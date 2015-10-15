@@ -16,6 +16,10 @@ import java.util.logging.Logger;
 
 public class Cpabe {
     static {
+        if (System.getProperty("jna.nosys") == null) {
+            Logger.getLogger(Cpabe.class.toString()).log(Level.WARNING, "New system property set (jna.nosys=true)");
+            System.setProperty("jna.nosys", "true");
+        }
         try {
             System.loadLibrary("jpbc-pbc");
         } catch (UnsatisfiedLinkError e) {
