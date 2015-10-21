@@ -2,6 +2,7 @@ package cpabe.tests;
 
 import cpabe.*;
 import cpabe.aes.AesEncryption;
+import cpabe.aes.InputStreamStopper;
 import cpabe.tests.rules.Repeat;
 import cpabe.tests.rules.RepeatRule;
 import org.junit.BeforeClass;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -54,9 +56,8 @@ public class AesTest {
         assertTrue(Arrays.equals(plaintext, decryptedtext));
     }
 
-    //@Test
+    @Test
     public void readAfterABEFileTest() throws Exception {
-        // currently not working, difficult to do
         AbeSecretMasterKey smKey = Cpabe.setup();
         AbePublicKey pubKey = smKey.getPublicKey();
 
@@ -74,19 +75,21 @@ public class AesTest {
 
         byte[] encryptedData = baos.toByteArray();
         byte[] encryptedDataPlusBytes = Arrays.copyOf(encryptedData, encryptedData.length + 3);
-        encryptedDataPlusBytes[encryptedDataPlusBytes.length - 1] = 15;
-        encryptedDataPlusBytes[encryptedDataPlusBytes.length - 2] = 10;
+
         encryptedDataPlusBytes[encryptedDataPlusBytes.length - 3] = 5;
+        encryptedDataPlusBytes[encryptedDataPlusBytes.length - 2] = 10;
+        encryptedDataPlusBytes[encryptedDataPlusBytes.length - 1] = 15;
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(encryptedDataPlusBytes);
+        ByteArrayInputStream input = new ByteArrayInputStream(encryptedDataPlusBytes);
+        InputStream limitedInput = new InputStreamStopper(input, encryptedData.length);
         ByteArrayOutputStream decryptedStream = new ByteArrayOutputStream();
-        Cpabe.decrypt(key, bais, decryptedStream);
-
+        Cpabe.decrypt(key, limitedInput, decryptedStream);
 
         byte[] decryptedData = decryptedStream.toByteArray();
         assertTrue(Arrays.equals(plaintext, decryptedData));
-        assertTrue(bais.read() == 5);
-        assertTrue(bais.read() == 10);
-        assertTrue(bais.read() == 15);
+        assertTrue(input.read() == 5);
+        assertTrue(input.read() == 10);
+        assertTrue(input.read() == 15);
+        assertTrue(input.read() == -1);
     }
 }
