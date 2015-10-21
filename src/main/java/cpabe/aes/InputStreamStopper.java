@@ -17,6 +17,7 @@ public class InputStreamStopper extends InputStream {
     public InputStreamStopper(InputStream in, long maxLength) {
         this.curPos = 0;
         this.maxLength = maxLength;
+        this.in = in;
     }
 
     @Override

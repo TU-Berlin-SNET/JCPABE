@@ -29,16 +29,15 @@ public class AesEncryption {
         //Security.addProvider(new BouncyCastleProvider());
     }
 
+
+
     private static byte[] hash(byte[] cpabeData) {
         try {
             MessageDigest sha256 = MessageDigest.getInstance(HASHING_ALGORITHM);
             return Arrays.copyOf(sha256.digest(cpabeData), AES_KEY_LENGTH);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            System.err.println(HASHING_ALGORITHM + " not provided by runtime environment. Exiting...");
-            System.exit(1);
+            throw new RuntimeException("Hashing Alogrithm not available: " + HASHING_ALGORITHM, e);
         }
-        return null;
     }
 
     private static byte[] combine(byte[] cpabeData, byte[] lbeKey) {
@@ -69,7 +68,7 @@ public class AesEncryption {
         }
     }
 
-    public static CipherInputStream encrypt(byte[] cpabeKey, byte[] lbeKey, byte[] iv, InputStream input) throws IOException, AbeEncryptionException {
+    public static CipherInputStream encrypt(byte[] cpabeKey, byte[] lbeKey, byte[] iv, InputStream input) throws AbeEncryptionException {
         try {
             SecretKeySpec skeySpec = new SecretKeySpec(combine(cpabeKey, lbeKey), KEY_ALGORITHM);
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -81,7 +80,7 @@ public class AesEncryption {
         }
     }
 
-    public static CipherInputStream decrypt(byte[] cpabeKey, byte[] lbeKey, byte[] iv, InputStream input) throws IOException, AbeDecryptionException {
+    public static CipherInputStream decrypt(byte[] cpabeKey, byte[] lbeKey, byte[] iv, InputStream input) throws AbeDecryptionException {
         try {
             SecretKeySpec skeySpec = new SecretKeySpec(combine(cpabeKey, lbeKey), KEY_ALGORITHM);
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);

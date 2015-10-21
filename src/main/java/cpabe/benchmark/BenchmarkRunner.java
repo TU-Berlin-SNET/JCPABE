@@ -4,7 +4,7 @@ import java.io.*;
 
 public class BenchmarkRunner {
     public static BenchmarkResult runBenchmark(Benchmark benchmark) {
-        if (!verifyOptions(benchmark)) return null;
+        verifyOptions(benchmark);
 
         benchmark.initializeBenchmark();
         int warmupRuns = benchmark.numWarmupRuns();
@@ -42,11 +42,10 @@ public class BenchmarkRunner {
     }
 
 
-    private static boolean verifyOptions(Benchmark benchmark) {
+    private static void verifyOptions(Benchmark benchmark) {
         if (benchmark.numRunsPerIteration() <= 0)
             throw new IllegalArgumentException("numRunsPerRun can't be 0 or lower");
         if (benchmark.numWarmupRuns() < 0) throw new IllegalArgumentException("numWarmupRuns can't be lower than 0");
         if (benchmark.numIterations() <= 0) throw new IllegalArgumentException("numTestRuns can't be 0 or lower");
-        return true;
     }
 }

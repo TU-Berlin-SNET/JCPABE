@@ -129,7 +129,7 @@ public class PolicyParsing {
             }
             retVal.append(Util.bit_marker_flexint(name, i, greaterThan));
             retVal.append(' ');
-            retVal.append(minSatisfy + "of2 ");
+            retVal.append(minSatisfy).append("of2 ");
         }
 
         // flexint_leader
@@ -162,12 +162,12 @@ public class PolicyParsing {
     private static void handleOf(ASTOf current, StringBuffer retVal) {
         int numChildren = current.jjtGetNumChildren();
         int minSatisfy = current.getNumber();
-        retVal.append(minSatisfy + "of" + numChildren);
+        retVal.append(minSatisfy).append("of").append(numChildren);
     }
 
     private static void handleExpression(ASTExpression current, StringBuffer retVal) {
         int numChildren = current.jjtGetNumChildren();
         int minSatisfy = current.getType().equalsIgnoreCase("and") ? numChildren : 1;
-        retVal.append(minSatisfy + "of" + numChildren);
+        retVal.append(minSatisfy).append("of").append(numChildren);
     }
 }

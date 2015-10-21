@@ -26,7 +26,7 @@ public abstract class Benchmark {
     /**
      * Is called exactly numWarmupRuns() + numBenchmarkRuns() * numRunsPerRun() times.
      *
-     * @param the current iteration, begins at 0, continously -1 for warmup
+     * @param iteration the current iteration, begins at 0, continuously -1 for warmup
      */
     public abstract void singleRun(int iteration);
 
