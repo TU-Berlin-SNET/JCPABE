@@ -25,22 +25,23 @@ public class AbeSecretMasterKey {
         this.g_alpha = g_alpha;
     }
 
-    private static AbeSecretMasterKey readFromStream(AbeInputStream stream) throws IOException {
-        AbePublicKey pubKey = AbePublicKey.readFromStream(stream);
-        stream.setPublicKey(pubKey);
-        Element betaIn = stream.readElement();
-        Element g_alphaIn = stream.readElement();
+    public static AbeSecretMasterKey readFromStream(InputStream stream) throws IOException {
+        AbeInputStream abeStream = new AbeInputStream(stream);
+        AbePublicKey pubKey = AbePublicKey.readFromStream(abeStream);
+        abeStream.setPublicKey(pubKey);
+        Element betaIn = abeStream.readElement();
+        Element g_alphaIn = abeStream.readElement();
         return new AbeSecretMasterKey(pubKey, betaIn, g_alphaIn);
     }
 
     public static AbeSecretMasterKey readFromFile(File file) throws IOException {
-        try (AbeInputStream stream = new AbeInputStream(new FileInputStream(file))) {
+        try (FileInputStream stream = new FileInputStream(file)) {
             return readFromStream(stream);
         }
     }
 
     public static AbeSecretMasterKey readFromByteArray(byte[] data) throws IOException {
-        try (AbeInputStream stream = new AbeInputStream(new ByteArrayInputStream(data))) {
+        try (ByteArrayInputStream stream = new ByteArrayInputStream(data)) {
             return readFromStream(stream);
         }
     }
