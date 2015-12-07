@@ -1,6 +1,7 @@
 package cpabe.tests;
 
 import cpabe.policy.AttributeParser;
+import cpabe.policy.PolicyParsing;
 import cpabe.policyparser.ParseException;
 import org.junit.Test;
 
@@ -17,6 +18,22 @@ public class ParserTest {
 
         assertEquals(parsed1, "att1 att2");
         assertEquals(parsed2, "att1 att2");
+    }
+
+    @Test
+    public void parseLocations() throws ParseException {
+        PolicyParsing.parsePolicy("location~12.00~12.00~12.00~12.00");
+        PolicyParsing.parsePolicy("location~12,00~12,00~12,00~12,00");
+    }
+
+    @Test(expected = ParseException.class)
+    public void parseInvalidLocation() throws ParseException {
+        PolicyParsing.parsePolicy("location~12.0.0~12.00~12.00~12.00");
+    }
+
+    @Test
+    public void parseTreshold() throws ParseException {
+        PolicyParsing.parsePolicy("2 of (att1, att2, att3)");
     }
 
 

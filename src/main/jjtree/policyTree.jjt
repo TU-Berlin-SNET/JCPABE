@@ -45,7 +45,7 @@ TOKEN : { < #GT : ">" > }
 
 TOKEN : { < ATTNAME : <LETTER>(<LETTERDIGIT>)* > }
 TOKEN : { < NUMBER : (<DIGIT>)+ > }
-TOKEN : { < DOUBLE : ("-")?(<DIGIT>)+(".")?(<DIGIT>)* > }
+TOKEN : { < DOUBLE : ("-")?(<DIGIT>)+("." | ",")?(<DIGIT>)* > }
 
 TOKEN : { < #LETTER : ["a"-"z", "A"-"Z"] > }
 TOKEN : { < #DIGIT : ["0"-"9"] > }

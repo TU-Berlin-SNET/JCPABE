@@ -4,9 +4,12 @@ import cpabe.*;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.*;
 
@@ -63,6 +66,9 @@ public class AreaAttributeTest {
         baisSchwerin.reset();
         assertFalse(Arrays.equals(data, decrypt(outsideSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin))));
     }
+
+
+    private static NumberFormat numberFormat = DecimalFormat.getInstance(Locale.ENGLISH);
 
     @Test
     public void longPolicy() throws Exception {
@@ -275,9 +281,8 @@ public class AreaAttributeTest {
                 System.err.println("singleLocation wrong: "+ singleLocation);
                 fail("Test setup wrong");
             }
-            //TODO localization issue
-            double lat = Double.parseDouble(singleLocationSplit[0]);
-            double lon = Double.parseDouble(singleLocationSplit[1]);
+            double lat = numberFormat.parse(singleLocationSplit[0]).doubleValue();
+            double lon = numberFormat.parse(singleLocationSplit[1]).doubleValue();
             actualLocations.add(new Location(lat, lon));
         }
 

@@ -149,6 +149,54 @@ public class Bsw07Test {
     }
 
     @Test
+    public void thresholdTest() throws Exception {
+        AbeSecretMasterKey smKey = Cpabe.setup();
+        AbePublicKey pubKey = smKey.getPublicKey();
+
+        byte[] data = TUtil.getRandomData();
+
+        String oneOfThreePolicy = "1 of (att1, att2, att3)";
+        String twoOfThreePolicy = "2 of (att1, att2, att3)";
+
+        AbeEncrypted oneOfThreeTest = Cpabe.encrypt(pubKey, oneOfThreePolicy, data);
+        AbeEncrypted twoOfThreeTest = Cpabe.encrypt(pubKey, twoOfThreePolicy, data);
+
+        ByteArrayInputStream oneOfThree = TUtil.getReusableStream(oneOfThreeTest, pubKey);
+        ByteArrayInputStream twoOfThree = TUtil.getReusableStream(twoOfThreeTest, pubKey);
+
+        AbePrivateKey noneOfThreeKey = Cpabe.keygen(smKey, "att9");
+        AbePrivateKey oneOfThreeKey = Cpabe.keygen(smKey, "att1");
+        AbePrivateKey twoOfThreeKey = Cpabe.keygen(smKey, "att1 att2");
+        AbePrivateKey allOfThreeKey = Cpabe.keygen(smKey, "att1 att2 att3");
+        AbePrivateKey otherTwoOfThreeKey = Cpabe.keygen(smKey, "att2 att3");
+
+        // noneOfThreeKey
+        assertFalse(Arrays.equals(data, decrypt(noneOfThreeKey, AbeEncrypted.readFromStream(pubKey, oneOfThree))));
+        assertFalse(Arrays.equals(data, decrypt(noneOfThreeKey, AbeEncrypted.readFromStream(pubKey, twoOfThree))));
+        TUtil.resetStreams(oneOfThree, twoOfThree);
+
+        // oneOfThreeKey
+        assertTrue(Arrays.equals(data, decrypt(oneOfThreeKey, AbeEncrypted.readFromStream(pubKey, oneOfThree))));
+        assertFalse(Arrays.equals(data, decrypt(oneOfThreeKey, AbeEncrypted.readFromStream(pubKey, twoOfThree))));
+        TUtil.resetStreams(oneOfThree, twoOfThree);
+
+        // twoOfThreeKey
+        assertTrue(Arrays.equals(data, decrypt(twoOfThreeKey, AbeEncrypted.readFromStream(pubKey, oneOfThree))));
+        assertTrue(Arrays.equals(data, decrypt(twoOfThreeKey, AbeEncrypted.readFromStream(pubKey, twoOfThree))));
+        TUtil.resetStreams(oneOfThree, twoOfThree);
+
+        // otherTwoOfThreeKey
+        assertTrue(Arrays.equals(data, decrypt(otherTwoOfThreeKey, AbeEncrypted.readFromStream(pubKey, oneOfThree))));
+        assertTrue(Arrays.equals(data, decrypt(otherTwoOfThreeKey, AbeEncrypted.readFromStream(pubKey, twoOfThree))));
+        TUtil.resetStreams(oneOfThree, twoOfThree);
+
+        // allOfThreeKey
+        assertTrue(Arrays.equals(data, decrypt(allOfThreeKey, AbeEncrypted.readFromStream(pubKey, oneOfThree))));
+        assertTrue(Arrays.equals(data, decrypt(allOfThreeKey, AbeEncrypted.readFromStream(pubKey, twoOfThree))));
+        TUtil.resetStreams(oneOfThree, twoOfThree);
+    }
+
+    @Test
     @Repeat(5)
     public void numberTest() throws Exception {
         long signedNumber = new BigInteger(Util.FLEXINT_MAXBITS, random).longValue();
