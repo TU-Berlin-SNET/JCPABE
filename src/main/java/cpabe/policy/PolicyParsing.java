@@ -16,7 +16,7 @@ public class PolicyParsing {
 
     public static String parsePolicy(String input) throws ParseException {
         try {
-            ASTStart policy = ParseTree.createParseTree(input.replace(",", ".")); //Replacing all "," to fix locale issues
+            ASTStart policy = ParseTree.createParseTree(input);
             return postFix(policy);
         } catch (TokenMgrError e) {
             throw new ParseException(e.getMessage());

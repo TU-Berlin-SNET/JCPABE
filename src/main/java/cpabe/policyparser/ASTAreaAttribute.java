@@ -22,6 +22,10 @@ public class ASTAreaAttribute extends SimpleNode {
 
     public void setValues(String name, String lon1, String lat1, String lon2, String lat2) throws ParseException {
         this.name = name;
+        lon1 = lon1.replace(',', '.');
+        lat1 = lat1.replace(',', '.');
+        lon2 = lon2.replace(',', '.');
+        lat2 = lat2.replace(',', '.');
         try {
             this.lon1 = numberFormat.parse(lon1).doubleValue();
             this.lat1 = numberFormat.parse(lat1).doubleValue();
