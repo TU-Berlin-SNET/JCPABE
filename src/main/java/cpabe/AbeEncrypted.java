@@ -24,6 +24,7 @@ public class AbeEncrypted implements AutoCloseable {
 
     public static AbeEncrypted readFromStream(AbePublicKey publicKey, InputStream input) throws IOException {
         AbeInputStream stream = new AbeInputStream(input, publicKey);
+        Version.readAndVerify(stream);
         Bsw07Cipher cipher = Bsw07Cipher.readFromStream(stream);
         int ivLength = stream.readInt();
         byte[] iv = new byte[ivLength];
@@ -45,6 +46,7 @@ public class AbeEncrypted implements AutoCloseable {
 
     public void writeEncryptedData(OutputStream out, AbePublicKey publicKey) throws IOException {
         AbeOutputStream abeOut = new AbeOutputStream(out, publicKey);
+        Version.writeToStream(abeOut);
         cipher.writeToStream(abeOut);
         abeOut.writeInt(iv.length);
         abeOut.write(iv);
