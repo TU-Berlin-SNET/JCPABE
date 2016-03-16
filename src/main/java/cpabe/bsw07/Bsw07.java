@@ -115,7 +115,10 @@ public class Bsw07 {
      */
     public static Bsw07CipherAndKey encrypt(AbePublicKey pub, String policy) throws AbeEncryptionException {
         Bsw07PolicyAbstractNode policyTree = Bsw07PolicyAbstractNode.parsePolicy(policy, pub);
+        return encrypt(pub, policyTree);
+    }
 
+    public static Bsw07CipherAndKey encrypt(AbePublicKey pub, Bsw07PolicyAbstractNode policyTree) {
         Element s = pub.getPairing().getZr().newRandomElement();
         Element message = pub.getPairing().getGT().newRandomElement();
         Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message);

@@ -3,6 +3,8 @@ package cpabe.bsw07.policy;
 import cpabe.*;
 import it.unisa.dia.gas.jpbc.Element;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,4 +95,18 @@ public abstract class Bsw07PolicyAbstractNode {
     public abstract int getThreshold();
 
     public abstract void writeToStream(AbeOutputStream stream) throws IOException;
+
+    public Bsw07PolicyAbstractNode getCopy(AbePublicKey publicKey) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             AbeOutputStream abeOutputStream = new AbeOutputStream(baos, publicKey)) {
+            writeToStream(abeOutputStream);
+            abeOutputStream.flush();
+            byte[] serializedPolicyTree = baos.toByteArray();
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(serializedPolicyTree);
+                 AbeInputStream abeIs = new AbeInputStream(bais, publicKey)) {
+                return Bsw07PolicyAbstractNode.readFromStream(abeIs);
+            }
+        }
+
+    }
 }
