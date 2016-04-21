@@ -1,7 +1,5 @@
 package cpabe.demo;
 
-import cpabe.benchmark.BenchmarkRunner;
-import cpabe.benchmark.LocationAttributeAmount;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 
 import java.io.File;
@@ -42,7 +40,6 @@ public class DemoForCpabe {
         prepareDirectory();
 
         long timeStart = System.currentTimeMillis();
-        BenchmarkRunner.runBenchmark(new LocationAttributeAmount(), new File(directory + "/" + "results.txt"));
 
         long timeEnd = System.currentTimeMillis();
         System.out.println(String.format("this operation took %d ms.", timeEnd - timeStart));
